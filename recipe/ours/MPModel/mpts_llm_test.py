@@ -1,3 +1,16 @@
+# Copyright 2024 Bytedance Ltd. and/or its affiliates
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 # from .risklearner import RiskLearner
 # from .new_trainer_risklearner import RiskLearnerTrainer
@@ -63,6 +76,7 @@
 
 
 import numpy as np
+
 
 class PosteriorSampler:
     def __init__(self, args, total_num_samples=40315, prior_alpha=1.0, prior_beta=1.0, 
@@ -146,11 +160,11 @@ class PosteriorSampler:
 
 if __name__ == "__main__":
     import json
-    import numpy as np
-    from tqdm import tqdm
-    import torch
-
     from types import SimpleNamespace
+
+    import numpy as np
+    import torch
+    from tqdm import tqdm
 
     # 创建嵌套参数结构
     class NestedNamespace(SimpleNamespace):
