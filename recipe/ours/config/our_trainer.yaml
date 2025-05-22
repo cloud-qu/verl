@@ -25,3 +25,22 @@ algorithm:
 
 trainer:
   project_name: verl-our
+
+tasksampler:
+  framework: 0 #0: uniform; 1: gdro; 2: cvar; 3: mpts
+  ts_ratio: 1.0
+  gamma_0: 1.0
+  gamma_1: 3.0
+  gamma_2: 0.0
+  mpts_proxy_lr: 0.005
+  mpts_kl_weight: 0.0001
+  warmup: 0
+  no_add_random: False
+  rejection_sampling_ratio: 0.0  #0.0 means no rejection sampling; 1.0 means only top B samples are kept
+  save_data: False
+  bandit_sample_strategy: "threshold" #threshold/topk/softmax
+  bandit_target_mean: 0.5
+  bandit_target_std: 0.0
+  bandit_lower_bound: 0.3
+  bandit_upper_bound: 0.7
+  bandit_sample_std: 0.05

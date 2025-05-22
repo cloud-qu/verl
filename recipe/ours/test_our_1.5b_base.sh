@@ -2,7 +2,7 @@
 set -xeuo pipefail
 
 project_name='deepscaler'
-exp_name='dapo-1.5b-ps'
+exp_name='dapo-1.5b-base'
 
 adv_estimator=grpo
 
@@ -56,7 +56,7 @@ offload=False
 
 ray job submit --no-wait --runtime-env="${RUNTIME_ENV}" \
     --working-dir "${WORKING_DIR}" \
-    -- python3 -m recipe.dapo.main_dapo \
+    -- python3 -m recipe.ours.main_our \
     data.train_files="${TRAIN_FILE}" \
     data.val_files="${TEST_FILE}" \
     data.prompt_key=prompt \
@@ -128,4 +128,7 @@ ray job submit --no-wait --runtime-env="${RUNTIME_ENV}" \
     trainer.save_freq=2 \
     trainer.total_epochs=20 \
     trainer.default_local_dir="${CKPTS_DIR}" \
-    trainer.resume_mode=disable
+    trainer.resume_mode=disable \
+    tasksampler.ts_ratio=1 \
+    tasksampler.framework=0 \
+    "${@:1}"
