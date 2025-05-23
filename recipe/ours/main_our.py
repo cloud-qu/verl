@@ -53,7 +53,8 @@ def get_custom_reward_fn(config):
 
 @hydra.main(config_path="config", config_name="our_trainer", version_base=None)
 def main(config):
-    run_ppo(config)
+    # run_ppo(config)
+    run_ppo_local(config)
 
 
 def run_ppo(config) -> None:
@@ -67,8 +68,17 @@ def run_ppo(config) -> None:
     runner = TaskRunner.remote()
     ray.get(runner.run.remote(config))
 
+def run_ppo_local(config):
+    if not ray.is_initialized():
+        # this is for local ray cluster
+        ray.init(
+            runtime_env={"env_vars": {"TOKENIZERS_PARALLELISM": "true", "NCCL_DEBUG": "WARN", "VLLM_LOGGING_LEVEL": "WARN"}},
+            num_cpus=config.ray_init.num_cpus,
+        )
+    runner = TaskRunner()
+    runner.run(config)
 
-@ray.remote(num_cpus=1)  # please make sure main_task is not scheduled on head
+# @ray.remote(num_cpus=1)  # please make sure main_task is not scheduled on head
 class TaskRunner:
     def run(self, config):
         # print initial config
@@ -179,7 +189,7 @@ class TaskRunner:
         # Note that we always use function-based RM for validation
         val_reward_fn = reward_manager_cls(
             tokenizer=tokenizer,
-            num_examine=1,
+            num_examine=0,
             compute_score=compute_score,
             reward_fn_key=config.data.reward_fn_key,
             max_resp_len=config.data.max_response_length,

@@ -81,9 +81,10 @@ class TS4LLM():
 
 
 import numpy as np
+import os
 
 class PosteriorSampler:
-    def __init__(self, args, total_num_samples, prior_alpha=1.0, prior_beta=1.0):
+    def __init__(self, args, total_num_samples, prior_alpha=1.0, prior_beta=1.0, init=False, init_dir=f"{os.environ['HOME']}/deepscaler/outputs/init_eval_train_1/index_score.json"):
         """
         :param num_samples: 总样本数 N
         :param prior_alpha, prior_beta: Beta先验参数
@@ -93,15 +94,20 @@ class PosteriorSampler:
         self.args = args
         self.real_batch_size = self.args.data.train_batch_size
         self.num_samples = total_num_samples
-        self.alpha = np.ones(total_num_samples) * prior_alpha
-        self.beta = np.ones(total_num_samples) * prior_beta
+        # self.alpha = np.ones(total_num_samples) * prior_alpha
+        self.alpha = {}
+        self.beta = {}
+        # self.beta = np.ones(total_num_samples) * prior_beta
+        self.prior_alpha = prior_alpha
+        self.prior_beta = prior_beta
         self.target_mean = args.tasksampler.bandit_target_mean
         self.target_std = args.tasksampler.bandit_target_std
         self.sample_std = args.tasksampler.bandit_sample_std
         self.lower_bound = args.tasksampler.bandit_lower_bound
         self.upper_bound = args.tasksampler.bandit_upper_bound
         self.sampling_strategy = args.tasksampler.bandit_sample_strategy
-        self.initialize_from_json()
+        if init:
+            self.initialize_from_json(init_dir)
 
     def sample_batch(self, batch_candidates_dict):
         """
@@ -109,7 +115,7 @@ class PosteriorSampler:
         :param batch_size: 最终选出的样本数量
         :return: 被选中的样本索引数组，大小为 batch_size
         """
-        candidate_indices = batch_candidates_dict['index'].astype('int')
+        candidate_indices = batch_candidates_dict['index']
         m = len(candidate_indices)
         assert self.real_batch_size <= m, "batch_size must be <= number of candidates"
 
@@ -117,7 +123,16 @@ class PosteriorSampler:
         target_mu = np.random.normal(loc=self.target_mean, scale=self.target_std)
 
         # Step 2: 从候选的 posterior 中采样 r_i
-        sampled_r = np.random.beta(self.alpha[candidate_indices], self.beta[candidate_indices])
+        local_alpha = []
+        local_beta = []
+        for index in candidate_indices:
+            if index not in self.alpha.keys():
+                self.alpha[index] = self.prior_alpha
+            local_alpha.append(self.alpha[index])
+            if index not in self.beta.keys():
+                self.beta[index] = self.prior_beta
+            local_beta.append(self.beta[index])
+        sampled_r = np.random.beta(np.array(local_alpha), np.array(local_beta))
 
         # Step 3: 计算 softmax 权重（越接近 mu_t 权重越大）
         if self.sampling_strategy == 'uniform':
@@ -162,7 +177,7 @@ class PosteriorSampler:
         :param indices: 被训练过的样本索引数组
         :param successes: 成功率数组（float ∈ [0,1]）
         """
-        indices = batch_candidates_dict['index'].astype('int')
+        indices = batch_candidates_dict['index']
         for idx, s in zip(indices, y):
             self.alpha[idx] += s * self.args.actor_rollout_ref.rollout.n
             self.beta[idx] += (1 - s)  * self.args.actor_rollout_ref.rollout.n
@@ -174,7 +189,6 @@ class PosteriorSampler:
         从json文件中加载先验观测，更新alpha和beta
         """
         import json
-        import os
         if json_path is None:
             json_path = f"{os.environ['HOME']}/deepscaler/outputs/init_eval_train_1/index_score.json"
         with open(json_path, 'r') as f:
@@ -184,8 +198,8 @@ class PosteriorSampler:
             idx = int(key)
             successes = sum(results)
             failures = len(results) - successes
-            self.alpha[idx] += successes * 3
-            self.beta[idx] += failures * 3
+            self.alpha[idx] = successes * 3 + self.prior_alpha
+            self.beta[idx] = failures * 3 + self.prior_beta
 
     def save(self, save_path):
         """
@@ -194,8 +208,8 @@ class PosteriorSampler:
         import json
         import os
         data = {}
-        for idx in range(self.num_samples):
-            data[str(idx)] = [int(self.alpha[idx]), int(self.beta[idx])]
+        for index in self.alpha.keys():
+            data[index] = [int(self.alpha[index]), int(self.beta[index])]
         with open(os.path.join(save_path, 'index_score.json'), 'w') as f:
             json.dump(data, f)
 
@@ -210,11 +224,13 @@ class PosteriorSampler:
                 data = json.load(f)
             
             for key, results in data.items():
-                idx = int(key)
+                # idx = int(key)
+                idx = key
                 self.alpha[idx] = results[0]
                 self.beta[idx] = results[1]
         except:
             pass
+
 
 
 
@@ -227,7 +243,8 @@ class HistorySampler:
         :param sample_std: 控制 softmax 采样 sharpness
         """
         self.num_samples = total_num_samples
-        self.scores = np.zeros(total_num_samples)
+        # self.scores = np.zeros(total_num_samples)
+        self.scores = {}
 
     def sample_batch(self, batch_candidates_dict):
         return batch_candidates_dict, None
@@ -237,7 +254,7 @@ class HistorySampler:
         :param indices: 被训练过的样本索引数组
         :param successes: 成功率数组（float ∈ [0,1]）
         """
-        indices = batch_candidates_dict['index'].astype('int')
+        indices = batch_candidates_dict['index']
         for idx, s in zip(indices, y):
             self.scores[idx] = s
         return None, None, None
@@ -247,9 +264,14 @@ class HistorySampler:
         返回所有 score < 1 的样本原始索引列表
         """
         # np.where 返回的是元组，第一个元素即是满足条件的索引数组
-        low_idxs = np.where(self.scores < 1)[0]
-        return low_idxs.tolist()
-    
+        low_idxs = []
+        for key in self.scores.keys():
+            if self.scores[key] < 1:
+                low_idxs.append(key)
+        return low_idxs
+        # low_idxs = np.where(self.scores < 1)[0]
+        # return low_idxs.tolist()
+
     def save(self, save_path):
         """
         保存 scores 到 json 文件
@@ -257,8 +279,8 @@ class HistorySampler:
         import json
         import os
         data = {}
-        for idx in range(self.num_samples):
-            data[str(idx)] = float(self.scores[idx])
+        for index in self.scores.keys():
+            data[index] = float(self.scores[index])
         with open(os.path.join(save_path, 'index_score.json'), 'w') as f:
             json.dump(data, f)
     def load(self, load_path):
@@ -272,7 +294,7 @@ class HistorySampler:
                 data = json.load(f)
             
             for key, score in data.items():
-                idx = int(key)
+                idx = key
                 self.scores[idx] = score
         except:
             pass

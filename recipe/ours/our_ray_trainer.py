@@ -82,7 +82,7 @@ def create_rl_dataset(data_paths, data_config, tokenizer, processor):
 
     return dataset
 
-def our_group_reward(batch, reward_tensor, task_sampler, batch_dict, metrics, sampled_acquisition_score=None):
+def our_group_reward(batch, acc, task_sampler, batch_dict, metrics, sampled_acquisition_score=None):
     # Rejection sampling based on rewards
     # Group rewards by uid
     uids = batch.non_tensor_batch['uid']#bs*nrollout,
@@ -94,7 +94,8 @@ def our_group_reward(batch, reward_tensor, task_sampler, batch_dict, metrics, sa
     uid_reward_list = []
     for uid in unique_uids:
         uid_mask = uids == uid
-        uid_rewards = reward_tensor[uid_mask].sum(-1)  # Sum rewards for each sequence (n_rollouts,)
+        # uid_rewards = reward_tensor[uid_mask].sum(-1)  # Sum rewards for each sequence (n_rollouts,)
+        uid_rewards = torch.tensor(acc)[uid_mask]
         uid_reward_list.append(uid_rewards.sum()/len(uid_rewards)) # avg accuracy for a query
         
         # Check if all rewards are 0 or all are 1 for this uid, i.e., for the question, no/all responses are correct
@@ -147,6 +148,8 @@ class OurRayPPOTrainer(RayPPOTrainer):
         collate_fn=None,
         train_sampler: Optional[Sampler] = None,
     ):
+        self.task_sampler = None
+        self.train_dataset = None
         super().__init__(config, tokenizer, role_worker_mapping, resource_pool_manager, ray_worker_group_cls, processor, reward_fn, val_reward_fn, train_dataset, val_dataset, collate_fn, train_sampler)
         #####task sampler###########
         self.task_sampler = None
@@ -156,11 +159,11 @@ class OurRayPPOTrainer(RayPPOTrainer):
 
             # self.task_sampler = TS4LLM(args=self.config, tokenizer=self.tokenizer, device='cuda')
             if self.config.tasksampler.framework == 4:
-                self.task_sampler = PosteriorSampler(args=self.config, total_num_samples=40315)
+                self.task_sampler = PosteriorSampler(args=self.config, total_num_samples=20000, init=self.config.tasksampler.bandit_init, init_dir=self.config.tasksampler.bandit_init_dir)
                 self.config.trainer.total_epochs = int(self.config.tasksampler.ts_ratio*self.config.trainer.total_epochs)
                 self.task_sampler.load(self.config.actor_rollout_ref.model.path)
             elif self.config.tasksampler.framework == 5:#srpo
-                self.task_sampler = HistorySampler(total_num_samples=40315)
+                self.task_sampler = HistorySampler(total_num_samples=20000)
                 self.config.tasksampler.ts_ratio = 1
                 self.task_sampler.load(self.config.actor_rollout_ref.model.path)
             elif self.config.tasksampler.framework == 6: #dapo
@@ -176,10 +179,12 @@ class OurRayPPOTrainer(RayPPOTrainer):
         Creates the train and validation dataloaders.
         """
         # TODO: we have to make sure the batch size is divisible by the dp size
-        from verl.trainer.main_ppo import create_rl_dataset, create_rl_sampler
+        from verl.trainer.main_ppo import create_rl_sampler
 
-        if train_dataset is None:
+        if train_dataset is None and self.train_dataset is None:
             train_dataset = create_rl_dataset(self.config.data.train_files, self.config.data, self.tokenizer, self.processor)
+        elif self.train_dataset is not None:
+            train_dataset = self.train_dataset
         if val_dataset is None:
             val_dataset = create_rl_dataset(self.config.data.val_files, self.config.data, self.tokenizer, self.processor)
         self.train_dataset, self.val_dataset = train_dataset, val_dataset
@@ -194,7 +199,7 @@ class OurRayPPOTrainer(RayPPOTrainer):
             collate_fn = default_collate_fn
         self.collate_fn = collate_fn
         if self.task_sampler is not None:
-            train_batch_size = int(self.config.tasksampler.ts_ratio * self.config.data.train_batch_size)
+            train_batch_size = int(self.config.tasksampler.ts_ratio * self.config.data.get("gen_batch_size", self.config.data.train_batch_size))
         else:
             train_batch_size = self.config.data.get("gen_batch_size", self.config.data.train_batch_size)
         self.train_batch_size = train_batch_size
@@ -306,6 +311,10 @@ class OurRayPPOTrainer(RayPPOTrainer):
         # currently, we only support validation using the reward_function.
         if self.val_reward_fn is not None and self.config.trainer.get("val_before_train", True):
             val_metrics = self._validate()
+            for key in val_metrics.keys():
+                if 'acc/mean@' in key:
+                    test_score = val_metrics[key]
+            val_metrics['val/test_score/'] = test_score
             assert val_metrics, f"{val_metrics=}"
             pprint(f"Initial validation metrics: {val_metrics}")
             logger.log(data=val_metrics, step=self.global_steps)
@@ -413,7 +422,7 @@ class OurRayPPOTrainer(RayPPOTrainer):
                         ##############
                         metrics = our_group_reward(
                             batch=new_batch,
-                            reward_tensor=reward_tensor,
+                            acc=reward_extra_infos_dict['acc'],#reward_tensor,
                             task_sampler=self.task_sampler,
                             batch_dict=batch_dict,
                             metrics=metrics,
@@ -531,6 +540,10 @@ class OurRayPPOTrainer(RayPPOTrainer):
                     if self.val_reward_fn is not None and self.config.trainer.test_freq > 0 and (is_last_step or self.global_steps % self.config.trainer.test_freq == 0):
                         with _timer("testing", timing_raw):
                             val_metrics: dict = self._validate()
+                            for key in val_metrics.keys():
+                                if 'acc/mean@' in key:
+                                    test_score = val_metrics[key]
+                            val_metrics['val/test_score/'] = test_score
                             if is_last_step:
                                 last_val_metrics = val_metrics
                         metrics.update(val_metrics)

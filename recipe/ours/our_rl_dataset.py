@@ -29,7 +29,7 @@ class IndexRLHFDataset(RLHFDataset):
     ):
         super().__init__(data_files, tokenizer, config, processor)
         # 保存原始数据
-        self.full_dataframe = self.dataframe.copy()
+        # self.full_dataframe = self.dataframe.copy()
         
         # 创建索引到行号的映射，以便高效查找
         self.index_map = self._build_index_map()
@@ -39,7 +39,7 @@ class IndexRLHFDataset(RLHFDataset):
         index_map = {}
         # for i, row in self.dataframe.iterrows():
         for i in range(len(self.dataframe)):
-            row = self.dataframe.iloc[i]
+            row = self.dataframe[i]
             if isinstance(row.get('extra_info'), dict) and 'index' in row.get('extra_info', {}):
                 index_value = row['extra_info']['index']
                 index_map[index_value] = i
@@ -105,7 +105,7 @@ class IndexRLHFDataset(RLHFDataset):
         
         # 筛选数据
         try:
-            filtered_df = self.dataframe.iloc[valid_row_indices]
+            filtered_df = self.dataframe[valid_row_indices]
             print(f"筛选得到行数: {len(filtered_df)}")
             
             # 检查筛选结果
@@ -124,12 +124,12 @@ class IndexRLHFDataset(RLHFDataset):
             self.index_map = self._build_index_map()
             print(f"更新后索引映射大小: {len(self.index_map)}")
             
-            # 验证新的索引映射
-            if len(self.index_map) == 0 and len(self.dataframe) > 0:
-                print("警告: 新索引映射为空，恢复原始数据和映射")
-                self.dataframe = self.full_dataframe.copy()
-                self.index_map = old_index_map
-                return
+            # # 验证新的索引映射
+            # if len(self.index_map) == 0 and len(self.dataframe) > 0:
+            #     print("警告: 新索引映射为空，恢复原始数据和映射")
+            #     self.dataframe = self.full_dataframe.copy()
+            #     self.index_map = old_index_map
+            #     return
                 
             print(f'筛选后数据集大小: {len(self.dataframe)}')
         except Exception as e:
@@ -138,11 +138,11 @@ class IndexRLHFDataset(RLHFDataset):
             traceback.print_exc()
             print("保持数据集不变")
     
-    def reset_dataset(self):
-        """重置数据集到初始状态"""
-        self.dataframe = self.full_dataframe.copy()
-        self.index_map = self._build_index_map()
-        print(f'数据集已重置，大小: {len(self.dataframe)}')
+    # def reset_dataset(self):
+    #     """重置数据集到初始状态"""
+    #     self.dataframe = self.full_dataframe.copy()
+    #     self.index_map = self._build_index_map()
+    #     print(f'数据集已重置，大小: {len(self.dataframe)}')
     
     def get_available_indices(self):
         """获取当前可用的所有extra_info.index值"""

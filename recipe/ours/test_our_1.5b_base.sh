@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -xeuo pipefail
+export NCCL_P2P_DISABLE=1
+export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
 project_name='deepscaler'
 exp_name='dapo-1.5b-base'
@@ -44,9 +46,9 @@ TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/data/aime-2024.parquet"}
 
 # Algorithm
 temperature=1.0
+val_temperature=0.6
 top_p=1.0
 top_k=-1 # 0 for HF rollout, -1 for vLLM rollout
-val_top_p=0.7
 
 # Mathematically equivalent
 use_dynamic_bsz=True
@@ -54,9 +56,7 @@ infer_micro_batch_size=null
 train_micro_batch_size=null
 offload=False
 
-ray job submit --no-wait --runtime-env="${RUNTIME_ENV}" \
-    --working-dir "${WORKING_DIR}" \
-    -- python3 -m recipe.ours.main_our \
+python3 -m recipe.ours.main_our \
     data.train_files="${TRAIN_FILE}" \
     data.val_files="${TEST_FILE}" \
     data.prompt_key=prompt \
@@ -105,7 +105,7 @@ ray job submit --no-wait --runtime-env="${RUNTIME_ENV}" \
     actor_rollout_ref.rollout.temperature=${temperature} \
     actor_rollout_ref.rollout.top_p=${top_p} \
     actor_rollout_ref.rollout.top_k="${top_k}" \
-    actor_rollout_ref.rollout.val_kwargs.temperature=${temperature} \
+    actor_rollout_ref.rollout.val_kwargs.temperature=${val_temperature} \
     actor_rollout_ref.rollout.val_kwargs.top_p=${top_p} \
     actor_rollout_ref.rollout.val_kwargs.top_k=${top_k} \
     actor_rollout_ref.rollout.val_kwargs.do_sample=True \
@@ -124,7 +124,7 @@ ray job submit --no-wait --runtime-env="${RUNTIME_ENV}" \
     trainer.n_gpus_per_node=8 \
     trainer.nnodes="${NNODES}" \
     trainer.val_before_train=True \
-    trainer.test_freq=2 \
+    trainer.test_freq=4 \
     trainer.save_freq=2 \
     trainer.total_epochs=20 \
     trainer.default_local_dir="${CKPTS_DIR}" \
