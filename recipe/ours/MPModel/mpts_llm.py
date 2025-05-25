@@ -106,8 +106,8 @@ class PosteriorSampler:
         self.lower_bound = args.tasksampler.bandit_lower_bound
         self.upper_bound = args.tasksampler.bandit_upper_bound
         self.sampling_strategy = args.tasksampler.bandit_sample_strategy
-        if init:
-            self.initialize_from_json(init_dir)
+        # if init:
+        #     self.initialize_from_json(init_dir)
 
     def sample_batch(self, batch_candidates_dict):
         """

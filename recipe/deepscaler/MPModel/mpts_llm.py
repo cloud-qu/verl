@@ -195,7 +195,7 @@ class PosteriorSampler:
             data = json.load(f)
         
         for key, results in data.items():
-            idx = int(key)
+            idx = key
             successes = sum(results)
             failures = len(results) - successes
             self.alpha[idx] = successes * 3 + self.prior_alpha

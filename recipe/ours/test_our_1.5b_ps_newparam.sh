@@ -128,7 +128,7 @@ python3 -m recipe.ours.main_our \
     trainer.nnodes="${NNODES}" \
     trainer.val_before_train=False \
     trainer.test_freq=4 \
-    trainer.save_freq=2 \
+    trainer.save_freq=4 \
     trainer.total_epochs=20 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
@@ -137,6 +137,5 @@ python3 -m recipe.ours.main_our \
     tasksampler.bandit_sample_strategy='threshold'\
     tasksampler.bandit_lower_bound=0.3\
     tasksampler.bandit_upper_bound=0.65\
-    tasksampler.bandit_init=True\
-    tasksampler.bandit_init_dir='/home/quyun/verl/ckpts/deepscaler/dapo-1.5b-ps/global_step_82/actor/index_score.json'\
+    tasksampler.bandit_load_dir='/home/quyun/verl/ckpts/deepscaler/dapo-1.5b-ps/global_step_82/actor/index_score.json'\
     "${@:1}"

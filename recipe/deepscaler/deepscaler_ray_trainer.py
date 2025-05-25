@@ -159,11 +159,11 @@ class OurRayPPOTrainer(RayPPOTrainer):
 
             # self.task_sampler = TS4LLM(args=self.config, tokenizer=self.tokenizer, device='cuda')
             if self.config.tasksampler.framework == 4:
-                self.task_sampler = PosteriorSampler(args=self.config, total_num_samples=20000, init=self.config.tasksampler.bandit_init, init_dir=self.config.tasksampler.bandit_init_dir)
+                self.task_sampler = PosteriorSampler(args=self.config, total_num_samples=40315, init=self.config.tasksampler.bandit_init, init_dir=self.config.tasksampler.bandit_init_dir)
                 self.config.trainer.total_epochs = int(self.config.tasksampler.ts_ratio*self.config.trainer.total_epochs)
                 self.task_sampler.load(self.config.actor_rollout_ref.model.path)
             elif self.config.tasksampler.framework == 5:#srpo
-                self.task_sampler = HistorySampler(total_num_samples=20000)
+                self.task_sampler = HistorySampler(total_num_samples=40315)
                 self.config.tasksampler.ts_ratio = 1
                 self.task_sampler.load(self.config.actor_rollout_ref.model.path)
             elif self.config.tasksampler.framework == 6: #dapo
@@ -404,14 +404,14 @@ class OurRayPPOTrainer(RayPPOTrainer):
 
                         # we combine with rule-based rm
                         reward_extra_infos_dict: dict[str, list]
-                        try:
-                            reward_result = self.reward_fn(new_batch, return_dict=True)
-                            reward_tensor = reward_result["reward_tensor"]
-                            reward_extra_infos_dict = reward_result["reward_extra_info"]
-                        except Exception as e:
-                            print(f"Error in reward_fn: {e}")
-                            reward_tensor = self.reward_fn(new_batch)
-                            reward_extra_infos_dict = {}
+                        # try:
+                        #     reward_result = self.reward_fn(new_batch, return_dict=True)
+                        #     reward_tensor = reward_result["reward_tensor"]
+                        #     reward_extra_infos_dict = reward_result["reward_extra_info"]
+                        # except Exception as e:
+                        #     print(f"Error in reward_fn: {e}")
+                        reward_tensor = self.reward_fn(new_batch)
+                        reward_extra_infos_dict = {}
 
                         new_batch.batch["token_level_scores"] = reward_tensor
 
@@ -422,7 +422,7 @@ class OurRayPPOTrainer(RayPPOTrainer):
                         ##############
                         metrics = our_group_reward(
                             batch=new_batch,
-                            acc=reward_extra_infos_dict['acc'],#reward_tensor,
+                            acc=reward_extra_infos_dict['acc'] if 'acc' in reward_extra_infos_dict.keys() else reward_tensor,
                             task_sampler=self.task_sampler,
                             batch_dict=batch_dict,
                             metrics=metrics,

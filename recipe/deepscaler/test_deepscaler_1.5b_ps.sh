@@ -41,8 +41,8 @@ NNODES=${NNODES:-1}
 RAY_DATA_HOME=${RAY_DATA_HOME:-"${HOME}/verl"}
 MODEL_PATH=${MODEL_PATH:-"${RAY_DATA_HOME}/models/DeepSeek-R1-Distill-Qwen-1.5B"}
 CKPTS_DIR=${CKPTS_DIR:-"${RAY_DATA_HOME}/ckpts/${project_name}/${exp_name}"}
-TRAIN_FILE=${TRAIN_FILE:-"${RAY_DATA_HOME}/deepscaler/data/train.parquet"}
-TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/deepscaler/data/aime.parquet"}
+TRAIN_FILE=${TRAIN_FILE:-"${HOME}/deepscaler/data/train.parquet"}
+TEST_FILE=${TEST_FILE:-"${HOME}/deepscaler/data/aime.parquet"}
 
 # Algorithm
 temperature=0.6
@@ -52,14 +52,14 @@ top_k=-1 # 0 for HF rollout, -1 for vLLM rollout
 
 # Mathematically equivalent
 use_dynamic_bsz=True
-infer_micro_batch_size=null
-train_micro_batch_size=null
+infer_micro_batch_size=64
+train_micro_batch_size=64
 offload=False
 
 # ray job submit --no-wait --runtime-env="${RUNTIME_ENV}" \
 #     --working-dir "${WORKING_DIR}" \
 #     -- 
-python3 -m recipe.ours.main_our \
+python3 -m recipe.deepscaler.main_deepscaler \
     data.train_files="${TRAIN_FILE}" \
     data.val_files="${TEST_FILE}" \
     data.prompt_key=prompt \
@@ -112,7 +112,7 @@ python3 -m recipe.ours.main_our \
     actor_rollout_ref.rollout.val_kwargs.top_p=${top_p} \
     actor_rollout_ref.rollout.val_kwargs.top_k=${top_k} \
     actor_rollout_ref.rollout.val_kwargs.do_sample=True \
-    actor_rollout_ref.rollout.val_kwargs.n=1 \
+    actor_rollout_ref.rollout.val_kwargs.n=8 \
     actor_rollout_ref.ref.log_prob_micro_batch_size=${infer_micro_batch_size} \
     actor_rollout_ref.ref.fsdp_config.param_offload=${offload} \
     actor_rollout_ref.ref.ulysses_sequence_parallel_size=1 \
@@ -128,7 +128,7 @@ python3 -m recipe.ours.main_our \
     trainer.nnodes="${NNODES}" \
     trainer.val_before_train=False \
     trainer.test_freq=4 \
-    trainer.save_freq=2 \
+    trainer.save_freq=4 \
     trainer.total_epochs=20 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
@@ -137,4 +137,6 @@ python3 -m recipe.ours.main_our \
     tasksampler.bandit_sample_strategy='threshold'\
     tasksampler.bandit_lower_bound=0.3\
     tasksampler.bandit_upper_bound=0.65\
+    tasksampler.bandit_init=True\
+    tasksampler.bandit_init_dir='/home/quyun/deepscaler/scripts/train/index_score.json'\
     "${@:1}"
