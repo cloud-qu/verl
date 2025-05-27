@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -xeuo pipefail
+export VLLM_ATTENTION_BACKEND=XFORMERS
 export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
@@ -112,7 +113,7 @@ python3 -m recipe.deepscaler.main_deepscaler \
     actor_rollout_ref.rollout.val_kwargs.top_p=${top_p} \
     actor_rollout_ref.rollout.val_kwargs.top_k=${top_k} \
     actor_rollout_ref.rollout.val_kwargs.do_sample=True \
-    actor_rollout_ref.rollout.val_kwargs.n=8 \
+    actor_rollout_ref.rollout.val_kwargs.n=16 \
     actor_rollout_ref.ref.log_prob_micro_batch_size=${infer_micro_batch_size} \
     actor_rollout_ref.ref.fsdp_config.param_offload=${offload} \
     actor_rollout_ref.ref.ulysses_sequence_parallel_size=1 \
@@ -127,8 +128,8 @@ python3 -m recipe.deepscaler.main_deepscaler \
     trainer.n_gpus_per_node=8 \
     trainer.nnodes="${NNODES}" \
     trainer.val_before_train=False \
-    trainer.test_freq=4 \
-    trainer.save_freq=4 \
+    trainer.test_freq=10 \
+    trainer.save_freq=10 \
     trainer.total_epochs=20 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
