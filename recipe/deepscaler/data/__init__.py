@@ -9,7 +9,7 @@ Exports:
     Dataset: Union type for either training or testing datasets.
 """
 
-from deepscaler.data.dataset_types import TrainDataset, TestDataset, Dataset
+from .dataset_types import TrainDataset, TestDataset, Dataset
 
 __all__ = [
     'TrainDataset',
