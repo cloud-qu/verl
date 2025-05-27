@@ -1,9 +1,11 @@
 
-from .risklearner import RiskLearner
-from .new_trainer_risklearner import RiskLearnerTrainer
 # from wordllama import WordLlama
 import torch
+
+from .new_trainer_risklearner import RiskLearnerTrainer
+from .risklearner import RiskLearner
 from .sampler import MP_BatchSampler
+
 # from sentence_transformers import SentenceTransformer
 
 
@@ -80,8 +82,10 @@ class TS4LLM():
 
 
 
-import numpy as np
 import os
+
+import numpy as np
+
 
 class PosteriorSampler:
     def __init__(self, args, total_num_samples, prior_alpha=1.0, prior_beta=1.0, init=False, init_dir=f"{os.environ['HOME']}/deepscaler/outputs/init_eval_train_1/index_score.json"):
@@ -170,7 +174,7 @@ class PosteriorSampler:
             sampled_index = np.argsort(distances)[:self.real_batch_size]
     
         batch_candidates_dict = {k: v[sampled_index] for k, v in batch_candidates_dict.items()}
-        return batch_candidates_dict, torch.tensor(sampled_r[sampled_index]).to('cuda')
+        return batch_candidates_dict, torch.tensor(sampled_r[sampled_index])#.to('cuda')
 
     def train(self, batch_candidates_dict, y):
         """

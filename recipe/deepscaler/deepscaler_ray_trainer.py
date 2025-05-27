@@ -109,7 +109,7 @@ def our_group_reward(batch, acc, task_sampler, batch_dict, metrics, sampled_acqu
     if task_sampler is not None:
         ts_loss, ts_recon_loss, ts_kl_loss = task_sampler.train(batch_dict, success_rate)
         if sampled_acquisition_score is not None:
-            metrics['tasksample/train_corr'] = np.corrcoef(sampled_acquisition_score.squeeze().cpu().detach().numpy(), (-success_rate).squeeze().cpu().detach().numpy())[0,1]
+            metrics['tasksample/train_corr'] = np.corrcoef(sampled_acquisition_score.squeeze().detach().numpy(), (-success_rate).squeeze().cpu().detach().numpy())[0,1]
             metrics['tasksample/sampler_loss'] = ts_loss
             metrics['tasksample/recon_loss'] = ts_recon_loss
             metrics['tasksample/kl_loss'] = ts_kl_loss
