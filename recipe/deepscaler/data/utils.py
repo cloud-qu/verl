@@ -8,7 +8,7 @@ import json
 import os
 from typing import Any, Dict, List
 
-from deepscaler.data import Dataset, TrainDataset
+from . import Dataset, TrainDataset
 
 
 def load_dataset(dataset: Dataset) -> List[Dict[str, Any]]:

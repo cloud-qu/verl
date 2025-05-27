@@ -13,8 +13,8 @@ import pandas as pd
 from verl.utils.hdfs_io import copy, makedirs
 from verl.utils.reward_score.math import last_boxed_only_string, remove_boxed
 
-from deepscaler.data.utils import load_dataset
-from deepscaler.data.dataset_types import TrainDataset, TestDataset
+from data.utils import load_dataset
+from data.dataset_types import TrainDataset, TestDataset
 
 
 def extract_solution(solution_str: str) -> str:
