@@ -160,9 +160,27 @@ class TaskRunner:
             role_worker_mapping[Role.RefPolicy] = ray.remote(ActorRolloutRefWorker)
             mapping[Role.RefPolicy] = global_pool_id
 
-        from .deepscaler_reward_manager import RewardManager
+        
 
-        reward_manager_cls = RewardManager
+        reward_manager_name = config.reward_model.get("reward_manager", "naive")
+        if reward_manager_name == "naive":
+            from verl.workers.reward_manager import NaiveRewardManager
+
+            reward_manager_cls = NaiveRewardManager
+        elif reward_manager_name == "prime":
+            from verl.workers.reward_manager import PrimeRewardManager
+
+            reward_manager_cls = PrimeRewardManager
+        elif reward_manager_name == "dapo":
+            from verl.workers.reward_manager import DAPORewardManager
+
+            reward_manager_cls = DAPORewardManager
+        elif reward_manager_name == "deepscaler":
+            from .deepscaler_reward_manager import RewardManager
+
+            reward_manager_cls = RewardManager
+        else:
+            raise NotImplementedError
 
         reward_fn = reward_manager_cls(
             tokenizer=tokenizer,
