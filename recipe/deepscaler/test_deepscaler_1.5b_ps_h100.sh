@@ -39,11 +39,12 @@ WORKING_DIR=${WORKING_DIR:-"${PWD}"}
 RUNTIME_ENV=${RUNTIME_ENV:-"${WORKING_DIR}/verl/trainer/runtime_env.yaml"}
 NNODES=${NNODES:-1}
 # Paths
-RAY_DATA_HOME=${RAY_DATA_HOME:-"${HOME}/verl"}
+# RAY_DATA_HOME=${RAY_DATA_HOME:-"${HOME}/verl"}
+RAY_DATA_HOME=${WORKING_DIR}
 MODEL_PATH=${MODEL_PATH:-"${RAY_DATA_HOME}/models/DeepSeek-R1-Distill-Qwen-1.5B"}
 CKPTS_DIR=${CKPTS_DIR:-"${RAY_DATA_HOME}/ckpts/${project_name}/${exp_name}"}
-TRAIN_FILE=${TRAIN_FILE:-"${HOME}/verl/recipe/deepscaler/processed_data/train.parquet"}
-TEST_FILE=${TEST_FILE:-"${HOME}/verl/recipe/deepscaler/processed_data/aime.parquet"}
+TRAIN_FILE=${TRAIN_FILE:-"${RAY_DATA_HOME}/recipe/deepscaler/processed_data/train.parquet"}
+TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/recipe/deepscaler/processed_data/aime.parquet"}
 
 # Algorithm
 temperature=0.6
@@ -56,7 +57,7 @@ use_dynamic_bsz=True
 infer_micro_batch_size=64
 train_micro_batch_size=64
 offload=False
-BANDIT_INIT_PATH=$(readlink -f "recipe/deepscaler/data/index_score.json")
+BANDIT_INIT_PATH="${RAY_DATA_HOME}/recipe/deepscaler/data/index_score.json"
 
 # ray job submit --no-wait --runtime-env="${RUNTIME_ENV}" \
 #     --working-dir "${WORKING_DIR}" \
@@ -140,5 +141,4 @@ python3 -m recipe.deepscaler.main_deepscaler \
     tasksampler.bandit_lower_bound=0.3\
     tasksampler.bandit_upper_bound=0.7\
     tasksampler.bandit_init=True\
-    tasksampler.bandit_init_dir=$BANDIT_INIT_PATH\
-    "${@:1}"
+    tasksampler.bandit_init_dir=$BANDIT_INIT_PATH "$@"

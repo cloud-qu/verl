@@ -39,11 +39,12 @@ WORKING_DIR=${WORKING_DIR:-"${PWD}"}
 RUNTIME_ENV=${RUNTIME_ENV:-"${WORKING_DIR}/verl/trainer/runtime_env.yaml"}
 NNODES=${NNODES:-1}
 # Paths
-RAY_DATA_HOME=${RAY_DATA_HOME:-"${HOME}/verl"}
+# RAY_DATA_HOME=${RAY_DATA_HOME:-"${HOME}/verl"}
+RAY_DATA_HOME=${WORKING_DIR}
 MODEL_PATH=${MODEL_PATH:-"${RAY_DATA_HOME}/models/DeepSeek-R1-Distill-Qwen-1.5B"}
 CKPTS_DIR=${CKPTS_DIR:-"${RAY_DATA_HOME}/ckpts/${project_name}/${exp_name}"}
-TRAIN_FILE=${TRAIN_FILE:-"${HOME}/verl/recipe/deepscaler/processed_data/train.parquet"}
-TEST_FILE=${TEST_FILE:-"${HOME}/verl/recipe/deepscaler/processed_data/aime.parquet"}
+TRAIN_FILE=${TRAIN_FILE:-"${RAY_DATA_HOME}/recipe/deepscaler/processed_data/train.parquet"}
+TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/recipe/deepscaler/processed_data/aime.parquet"}
 
 # Algorithm
 temperature=0.6
@@ -134,5 +135,4 @@ python3 -m recipe.deepscaler.main_deepscaler \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
     tasksampler.ts_ratio=1 \
-    tasksampler.framework=0 \
-    "${@:1}"
+    tasksampler.framework=0 "$@"
