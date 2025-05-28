@@ -102,6 +102,7 @@ use_dynamic_bsz=True
 infer_micro_batch_size=64
 train_micro_batch_size=64
 offload=False
+BANDIT_INIT_PATH="${RAY_DATA_HOME}/recipe/deepscaler/data/index_score.json"
 
 
 

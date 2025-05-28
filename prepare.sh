@@ -1,6 +1,6 @@
 
 #!/usr/bin/env bash
-set -euo pipefail
+set -x
 
 export PS1=""
 source "$(conda info --base)/etc/profile.d/conda.sh"
