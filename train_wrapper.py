@@ -415,4 +415,12 @@ if __name__ == "__main__":
     print(f"slurm_job_id: {slurm_job_id}")
     slurm_job_id = str(slurm_job_id)
 
-    main_wrapper_deepscaler_uniform()
+
+    if slurm_job_id == "5162629":
+        main_wrapper_deepscaler_uniform()
+    elif slurm_job_id == "5162630":
+        main_wrapper_deepscaler_topk()
+    elif slurm_job_id == None:
+        main_wrapper_deepscaler_ps()
+    else:
+        raise ValueError(f"Invalid slurm job id: {slurm_job_id}")
