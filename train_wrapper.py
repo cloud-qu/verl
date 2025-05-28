@@ -24,7 +24,7 @@ def main_wrapper_deepscaler_uniform():
     use_kl_in_reward=False
     kl_coef=0.001
     use_kl_loss=True
-    kl_loss_coef=0.0
+    kl_loss_coef=0.001
 
     clip_ratio_low=0.2
     clip_ratio_high=0.28
@@ -156,7 +156,7 @@ def main_wrapper_deepscaler_topk():
     use_kl_in_reward=False
     kl_coef=0.001
     use_kl_loss=True
-    kl_loss_coef=0.0
+    kl_loss_coef=0.001
 
     clip_ratio_low=0.2
     clip_ratio_high=0.28
@@ -290,7 +290,7 @@ def main_wrapper_deepscaler_ps():
     use_kl_in_reward=False
     kl_coef=0.001
     use_kl_loss=True
-    kl_loss_coef=0.0
+    kl_loss_coef=0.001
 
     clip_ratio_low=0.2
     clip_ratio_high=0.28
