@@ -57,9 +57,9 @@ def main_wrapper_deepscaler_uniform():
     train_micro_batch_size=64
     offload=False
 
-    with initialize(config_path="verl/trainer/config", version_base=None):
+    with initialize(config_path="recipe/deepscaler/config", version_base=None):
         cfg = compose(
-            config_name="ppo_trainer",
+            config_name="our_trainer",
             overrides=[
                     f"data.train_files='{TRAIN_FILE}'",
                     f"data.val_files='{TEST_FILE}'",
@@ -188,9 +188,9 @@ def main_wrapper_deepscaler_topk():
     train_micro_batch_size=64
     offload=False
 
-    with initialize(config_path="verl/trainer/config", version_base=None):
+    with initialize(config_path="recipe/deepscaler/config", version_base=None):
         cfg = compose(
-            config_name="ppo_trainer",
+            config_name="our_trainer",
             overrides=[
                     f"data.train_files='{TRAIN_FILE}'",
                     f"data.val_files='{TEST_FILE}'",
@@ -321,9 +321,9 @@ def main_wrapper_deepscaler_ps():
     train_micro_batch_size=64
     offload=False
 
-    with initialize(config_path="verl/trainer/config", version_base=None):
+    with initialize(config_path="recipe/deepscaler/config", version_base=None):
         cfg = compose(
-            config_name="ppo_trainer",
+            config_name="our_trainer",
             overrides=[
                     f"data.train_files='{TRAIN_FILE}'",
                     f"data.val_files='{TEST_FILE}'",
