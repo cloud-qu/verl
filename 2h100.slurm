@@ -1,5 +1,6 @@
 #!/bin/bash
 #SBATCH --nodes=2
+#SBATCH --job-name=verl-2h100
 #SBATCH --ntasks-per-node=1
 #SBATCH --gpus-per-node=4
 #SBATCH --gres=gpu:4

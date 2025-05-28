@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --nodes=2
-#SBATCH --job-name=2h1001gpu_lrz
+#SBATCH --job-name=verl-2h100-1gpu
 #SBATCH --ntasks-per-node=1
 #SBATCH --gpus-per-node=1
 #SBATCH --gres=gpu:1
