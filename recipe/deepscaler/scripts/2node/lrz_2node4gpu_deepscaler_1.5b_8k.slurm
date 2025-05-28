@@ -63,7 +63,7 @@ export NNODES=${SLURM_JOB_NUM_NODES}
 
 
 project_name='deepscaler'
-exp_name='verl-deepscaler-1.5b-h100-1n'
+exp_name='verl-deepscaler-1.5b-h100-2n'
 
 adv_estimator=grpo
 
