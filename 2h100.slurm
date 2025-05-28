@@ -31,7 +31,7 @@ export GLOO_SOCKET_IFNAME="ibo8.8005"  # or your specific network interface, htt
 echo "Head Node IP with port: $ip_head"
 
 source ~/.bashrc
-conda activate rllm
+conda activate verl2
 
 
 # 启动 Head 节点上的 Ray
