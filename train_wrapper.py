@@ -140,7 +140,7 @@ def main_wrapper_deepscaler_uniform():
         return main(cfg)
 
 
-def main_wrapper_deepscaler_ps():
+def main_wrapper_deepscaler_topk():
     # 设置训练参数
     WORKING_DIR=os.path.dirname(os.path.abspath(__file__))
     RAY_DATA_HOME=f"{WORKING_DIR}"
