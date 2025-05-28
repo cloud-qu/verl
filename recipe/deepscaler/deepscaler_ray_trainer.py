@@ -312,7 +312,7 @@ class OurRayPPOTrainer(RayPPOTrainer):
         if self.val_reward_fn is not None and self.config.trainer.get("val_before_train", True):
             val_metrics = self._validate()
             for key in val_metrics.keys():
-                if 'acc/mean@' in key:
+                if 'reward/mean@' in key:
                     test_score = val_metrics[key]
             val_metrics['val/test_score/'] = test_score
             assert val_metrics, f"{val_metrics=}"
@@ -541,7 +541,7 @@ class OurRayPPOTrainer(RayPPOTrainer):
                         with _timer("testing", timing_raw):
                             val_metrics: dict = self._validate()
                             for key in val_metrics.keys():
-                                if 'acc/mean@' in key:
+                                if 'reward/mean@' in key:
                                     test_score = val_metrics[key]
                             val_metrics['val/test_score/'] = test_score
                             if is_last_step:

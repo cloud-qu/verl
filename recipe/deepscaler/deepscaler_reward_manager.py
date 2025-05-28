@@ -25,7 +25,7 @@ class RewardManager():
         self.tokenizer = tokenizer
         self.num_examine = num_examine  # the number of batches of decoded responses to print to the console
 
-    def __call__(self, data: DataProto):
+    def __call__(self, data: DataProto, return_dict=False):
         """We will expand this function gradually based on the available datasets"""
 
         # If there is rm score, we directly return rm score. Otherwise, we compute via rm_score_fn
@@ -84,4 +84,10 @@ class RewardManager():
         for i, score, valid_response_length in results:
             reward_tensor[i, valid_response_length - 1] = score
 
-        return reward_tensor
+        if return_dict:
+            return {
+                "reward_tensor": reward_tensor,
+                "reward_extra_info": {},
+            }
+        else:
+            return reward_tensor
