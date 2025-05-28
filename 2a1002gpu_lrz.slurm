@@ -1,16 +1,16 @@
 #!/bin/bash
 #SBATCH --nodes=2
-#SBATCH --job-name=2h1001gpu30min_lrz
+#SBATCH --job-name=2a1002gpu30min_lrz
 #SBATCH --ntasks-per-node=1
-#SBATCH --gpus-per-node=1
-#SBATCH --gres=gpu:1
+#SBATCH --gpus-per-node=2
+#SBATCH --gres=gpu:2
 #SBATCH --cpus-per-task=24
 #SBATCH --time=00:30:00
 #SBATCH --output=logs/slurm-%j.out
 #SBATCH --error=logs/slurm-%j.err
 #SBATCH --mail-type=END,FAIL,BEGIN
 #SBATCH --mail-user=tao.hu@lmu.de
-#SBATCH -p lrz-hgx-h100-94x4
+#SBATCH -p lrz-hgx-a100-80x4
 
 
 
@@ -27,7 +27,7 @@ port=26379
 ip_head=$head_node:$port
 export ip_head
 # Add this before starting Ray
-export GLOO_SOCKET_IFNAME="ibo8.8005"  # or your specific network interface, https://github.com/volcengine/verl/issues/967
+export GLOO_SOCKET_IFNAME="ibs1.8005"  # new  # or your specific network interface, https://github.com/volcengine/verl/issues/967
 
 echo "Head Node IP with port: $ip_head"
 

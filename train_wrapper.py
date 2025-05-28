@@ -11,9 +11,11 @@ from recipe.deepscaler.main_deepscaler import main
 
 def main_wrapper_deepscaler_uniform(is_debug=False):
     if is_debug:
-        nnodes = 1
+        nnodes = 2
+        n_gpus_per_node=2
     else:
         nnodes = 2
+        n_gpus_per_node=4
     # 设置训练参数
     WORKING_DIR=os.path.dirname(os.path.abspath(__file__))
     RAY_DATA_HOME=f"{WORKING_DIR}"
@@ -127,7 +129,7 @@ def main_wrapper_deepscaler_uniform(is_debug=False):
                     "trainer.logger=['console','wandb']",
                     f"trainer.project_name={project_name}",
                     f"trainer.experiment_name={exp_name}",
-                    "trainer.n_gpus_per_node=4",
+                    f"trainer.n_gpus_per_node={n_gpus_per_node}",
                     f"trainer.nnodes={nnodes}",
                     "trainer.val_before_train=False",
                     "trainer.test_freq=5",
@@ -146,8 +148,10 @@ def main_wrapper_deepscaler_uniform(is_debug=False):
 def main_wrapper_deepscaler_topk(is_debug=False):
     if is_debug:
         nnodes = 1
+        n_gpus_per_node=1
     else:
         nnodes = 2
+        n_gpus_per_node=4
     # 设置训练参数
     WORKING_DIR=os.path.dirname(os.path.abspath(__file__))
     RAY_DATA_HOME=f"{WORKING_DIR}"
@@ -262,7 +266,7 @@ def main_wrapper_deepscaler_topk(is_debug=False):
                     "trainer.logger=['console','wandb']",
                     f"trainer.project_name={project_name}",
                     f"trainer.experiment_name={exp_name}",
-                    "trainer.n_gpus_per_node=4",
+                    f"trainer.n_gpus_per_node={n_gpus_per_node}",
                     f"trainer.nnodes={nnodes}",
                     "trainer.val_before_train=False",
                     "trainer.test_freq=5",
@@ -283,8 +287,10 @@ def main_wrapper_deepscaler_topk(is_debug=False):
 def main_wrapper_deepscaler_ps(is_debug=False):
     if is_debug:
         nnodes = 1
+        n_gpus_per_node=1
     else:
         nnodes = 2
+        n_gpus_per_node=4
     # 设置训练参数
     WORKING_DIR=os.path.dirname(os.path.abspath(__file__))
     RAY_DATA_HOME=f"{WORKING_DIR}"
@@ -399,7 +405,7 @@ def main_wrapper_deepscaler_ps(is_debug=False):
                     "trainer.logger=['console','wandb']",
                     f"trainer.project_name={project_name}",
                     f"trainer.experiment_name={exp_name}",
-                    "trainer.n_gpus_per_node=4",
+                    f"trainer.n_gpus_per_node={n_gpus_per_node}",
                     f"trainer.nnodes={nnodes}",
                     "trainer.val_before_train=False",
                     "trainer.test_freq=5",

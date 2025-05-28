@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --nodes=2
-#SBATCH --job-name=2h1001gpu30min_lrz
+#SBATCH --job-name=2h1002gpu30min_lrz
 #SBATCH --ntasks-per-node=1
-#SBATCH --gpus-per-node=1
-#SBATCH --gres=gpu:1
+#SBATCH --gpus-per-node=2
+#SBATCH --gres=gpu:2
 #SBATCH --cpus-per-task=24
 #SBATCH --time=00:30:00
 #SBATCH --output=logs/slurm-%j.out
