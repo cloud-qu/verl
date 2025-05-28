@@ -9,7 +9,11 @@ from omegaconf import OmegaConf
 from recipe.deepscaler.main_deepscaler import main
 
 
-def main_wrapper_deepscaler_uniform():
+def main_wrapper_deepscaler_uniform(is_debug=False):
+    if is_debug:
+        nnodes = 1
+    else:
+        nnodes = 2
     # 设置训练参数
     WORKING_DIR=os.path.dirname(os.path.abspath(__file__))
     RAY_DATA_HOME=f"{WORKING_DIR}"
@@ -124,7 +128,7 @@ def main_wrapper_deepscaler_uniform():
                     f"trainer.project_name={project_name}",
                     f"trainer.experiment_name={exp_name}",
                     "trainer.n_gpus_per_node=4",
-                    "trainer.nnodes=2",
+                    f"trainer.nnodes={nnodes}",
                     "trainer.val_before_train=False",
                     "trainer.test_freq=5",
                     "trainer.save_freq=5",
@@ -139,7 +143,11 @@ def main_wrapper_deepscaler_uniform():
         return main(cfg)
 
 
-def main_wrapper_deepscaler_topk():
+def main_wrapper_deepscaler_topk(is_debug=False):
+    if is_debug:
+        nnodes = 1
+    else:
+        nnodes = 2
     # 设置训练参数
     WORKING_DIR=os.path.dirname(os.path.abspath(__file__))
     RAY_DATA_HOME=f"{WORKING_DIR}"
@@ -255,7 +263,7 @@ def main_wrapper_deepscaler_topk():
                     f"trainer.project_name={project_name}",
                     f"trainer.experiment_name={exp_name}",
                     "trainer.n_gpus_per_node=4",
-                    "trainer.nnodes=2",
+                    f"trainer.nnodes={nnodes}",
                     "trainer.val_before_train=False",
                     "trainer.test_freq=5",
                     "trainer.save_freq=5",
@@ -272,7 +280,11 @@ def main_wrapper_deepscaler_topk():
         print(OmegaConf.to_yaml(cfg))
         return main(cfg)
 
-def main_wrapper_deepscaler_ps():
+def main_wrapper_deepscaler_ps(is_debug=False):
+    if is_debug:
+        nnodes = 1
+    else:
+        nnodes = 2
     # 设置训练参数
     WORKING_DIR=os.path.dirname(os.path.abspath(__file__))
     RAY_DATA_HOME=f"{WORKING_DIR}"
@@ -388,7 +400,7 @@ def main_wrapper_deepscaler_ps():
                     f"trainer.project_name={project_name}",
                     f"trainer.experiment_name={exp_name}",
                     "trainer.n_gpus_per_node=4",
-                    "trainer.nnodes=2",
+                    f"trainer.nnodes={nnodes}",
                     "trainer.val_before_train=False",
                     "trainer.test_freq=5",
                     "trainer.save_freq=5",
@@ -412,7 +424,7 @@ if __name__ == "__main__":
     print(f"slurm_job_id: {slurm_job_id}")
     slurm_job_id = str(slurm_job_id)
 
-    main_wrapper_deepscaler_uniform()
+    main_wrapper_deepscaler_uniform(is_debug=True)
     if slurm_job_id == "5162674":
         main_wrapper_deepscaler_uniform()
     elif slurm_job_id == "5162675":
