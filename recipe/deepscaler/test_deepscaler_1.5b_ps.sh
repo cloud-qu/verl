@@ -1,25 +1,25 @@
 #!/usr/bin/env bash
 set -xeuo pipefail
-export VLLM_ATTENTION_BACKEND=XFORMERS
+# export VLLM_ATTENTION_BACKEND=XFORMERS
 export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
 project_name='deepscaler'
-exp_name='verl-deepscaler-1.5b-ps'
+exp_name='verl-deepscaler-1.5b'
 
 adv_estimator=grpo
 
 use_kl_in_reward=False
 kl_coef=0.001
 use_kl_loss=True
-kl_loss_coef=0.0
+kl_loss_coef=0.001
 
 clip_ratio_low=0.2
-clip_ratio_high=0.28
+clip_ratio_high=0.2
 
 max_prompt_length=$((1024))
 max_response_length=$((1024 * 8))
-enable_overlong_buffer=True
+enable_overlong_buffer=False
 overlong_buffer_len=$((1024 * 4))
 overlong_penalty_factor=1.0
 
@@ -42,6 +42,8 @@ NNODES=${NNODES:-1}
 RAY_DATA_HOME=${RAY_DATA_HOME:-"${HOME}/verl"}
 MODEL_PATH=${MODEL_PATH:-"${RAY_DATA_HOME}/models/DeepSeek-R1-Distill-Qwen-1.5B"}
 CKPTS_DIR=${CKPTS_DIR:-"${RAY_DATA_HOME}/ckpts/${project_name}/${exp_name}"}
+# TRAIN_FILE=${TRAIN_FILE:-"${HOME}/verl/recipe/deepscaler/processed_data/train.parquet"}
+# TEST_FILE=${TEST_FILE:-"${HOME}/verl/recipe/deepscaler/processed_data/aime.parquet"}
 TRAIN_FILE=${TRAIN_FILE:-"${HOME}/deepscaler/data/train.parquet"}
 TEST_FILE=${TEST_FILE:-"${HOME}/deepscaler/data/aime.parquet"}
 
@@ -53,7 +55,7 @@ top_k=-1 # 0 for HF rollout, -1 for vLLM rollout
 
 # Mathematically equivalent
 use_dynamic_bsz=True
-infer_micro_batch_size=64
+infer_micro_batch_size=128
 train_micro_batch_size=64
 offload=False
 
@@ -85,9 +87,9 @@ python3 -m recipe.deepscaler.main_deepscaler \
     actor_rollout_ref.actor.use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.ref.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.rollout.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
-    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$((max_prompt_length + max_response_length)) \
-    actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=$((max_prompt_length + max_response_length)) \
-    actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=$((max_prompt_length + max_response_length)) \
+    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=32768 \
+    actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=32768 \
+    actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=32768 \
     actor_rollout_ref.model.path="${MODEL_PATH}" \
     actor_rollout_ref.model.enable_gradient_checkpointing=True \
     actor_rollout_ref.actor.optim.lr=1e-6 \
@@ -97,7 +99,7 @@ python3 -m recipe.deepscaler.main_deepscaler \
     actor_rollout_ref.actor.ppo_micro_batch_size=${train_micro_batch_size} \
     actor_rollout_ref.actor.fsdp_config.param_offload=${offload} \
     actor_rollout_ref.actor.fsdp_config.optimizer_offload=${offload} \
-    actor_rollout_ref.actor.entropy_coeff=0 \
+    actor_rollout_ref.actor.entropy_coeff=0.001 \
     actor_rollout_ref.actor.grad_clip=1.0 \
     actor_rollout_ref.actor.loss_agg_mode=${loss_agg_mode} \
     actor_rollout_ref.actor.ulysses_sequence_parallel_size=1 \
@@ -118,7 +120,7 @@ python3 -m recipe.deepscaler.main_deepscaler \
     actor_rollout_ref.ref.fsdp_config.param_offload=${offload} \
     actor_rollout_ref.ref.ulysses_sequence_parallel_size=1 \
     actor_rollout_ref.actor.fsdp_config.fsdp_size=-1 \
-    reward_model.reward_manager=dapo \
+    reward_model.reward_manager=deepscaler \
     reward_model.overlong_buffer.enable=${enable_overlong_buffer} \
     reward_model.overlong_buffer.len=${overlong_buffer_len} \
     reward_model.overlong_buffer.penalty_factor=${overlong_penalty_factor} \
@@ -133,11 +135,11 @@ python3 -m recipe.deepscaler.main_deepscaler \
     trainer.total_epochs=20 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
-    tasksampler.ts_ratio=16 \
-    tasksampler.framework=4 \
-    tasksampler.bandit_sample_strategy='threshold'\
+    tasksampler.ts_ratio=1 \
+    tasksampler.framework=0 \
+    tasksampler.bandit_sample_strategy='topk'\
     tasksampler.bandit_lower_bound=0.3\
-    tasksampler.bandit_upper_bound=0.65\
+    tasksampler.bandit_upper_bound=0.7\
     tasksampler.bandit_init=True\
-    tasksampler.bandit_init_dir='/home/quyun/deepscaler/scripts/train/index_score.json'\
+    tasksampler.bandit_init_dir='/home/quyun/verl/recipe/deepscaler/data/index_score.json'\
     "${@:1}"

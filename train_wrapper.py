@@ -6,7 +6,7 @@ import os
 from hydra import compose, initialize
 from omegaconf import OmegaConf
 
-from recipe.deepscaler.main_deepscaler import main
+from recipe.deepscaler.main_deepscaler_remote import main
 
 
 def main_wrapper_deepscaler_uniform(is_debug=False):
@@ -33,7 +33,7 @@ def main_wrapper_deepscaler_uniform(is_debug=False):
     kl_loss_coef=0.001
 
     clip_ratio_low=0.2
-    clip_ratio_high=0.28
+    clip_ratio_high=0.2
 
     max_prompt_length=1024
     max_response_length=1024 * 8
@@ -59,7 +59,7 @@ def main_wrapper_deepscaler_uniform(is_debug=False):
 
     # Mathematically equivalent
     use_dynamic_bsz=True
-    infer_micro_batch_size=64
+    infer_micro_batch_size=128
     train_micro_batch_size=64
     offload=False
 
@@ -89,9 +89,9 @@ def main_wrapper_deepscaler_uniform(is_debug=False):
                     f"actor_rollout_ref.actor.use_dynamic_bsz={use_dynamic_bsz}",
                     f"actor_rollout_ref.ref.log_prob_use_dynamic_bsz={use_dynamic_bsz}",
                     f"actor_rollout_ref.rollout.log_prob_use_dynamic_bsz={use_dynamic_bsz}",
-                    f"actor_rollout_ref.actor.ppo_max_token_len_per_gpu={max_prompt_length + max_response_length}",
-                    f"actor_rollout_ref.ref.log_prob_max_token_len_per_gpu={max_prompt_length + max_response_length}",
-                    f"actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu={max_prompt_length + max_response_length}",
+                    f"actor_rollout_ref.actor.ppo_max_token_len_per_gpu=32768",
+                    f"actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=32768",
+                    f"actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=32768",
                     f"actor_rollout_ref.model.path={MODEL_PATH}",
                     "actor_rollout_ref.model.enable_gradient_checkpointing=True",
                     "actor_rollout_ref.actor.optim.lr=1e-6",
@@ -101,7 +101,7 @@ def main_wrapper_deepscaler_uniform(is_debug=False):
                     f"actor_rollout_ref.actor.ppo_micro_batch_size={train_micro_batch_size}",
                     f"actor_rollout_ref.actor.fsdp_config.param_offload={offload}",
                     f"actor_rollout_ref.actor.fsdp_config.optimizer_offload={offload}",
-                    "actor_rollout_ref.actor.entropy_coeff=0",
+                    "actor_rollout_ref.actor.entropy_coeff=0.001",
                     "actor_rollout_ref.actor.grad_clip=1.0",
                     f"actor_rollout_ref.actor.loss_agg_mode={loss_agg_mode}",
                     "actor_rollout_ref.actor.ulysses_sequence_parallel_size=1",
@@ -170,7 +170,7 @@ def main_wrapper_deepscaler_topk(is_debug=False):
     kl_loss_coef=0.001
 
     clip_ratio_low=0.2
-    clip_ratio_high=0.28
+    clip_ratio_high=0.2
 
     max_prompt_length=1024
     max_response_length=1024 * 8
@@ -196,7 +196,7 @@ def main_wrapper_deepscaler_topk(is_debug=False):
 
     # Mathematically equivalent
     use_dynamic_bsz=True
-    infer_micro_batch_size=64
+    infer_micro_batch_size=128
     train_micro_batch_size=64
     offload=False
 
@@ -226,9 +226,9 @@ def main_wrapper_deepscaler_topk(is_debug=False):
                     f"actor_rollout_ref.actor.use_dynamic_bsz={use_dynamic_bsz}",
                     f"actor_rollout_ref.ref.log_prob_use_dynamic_bsz={use_dynamic_bsz}",
                     f"actor_rollout_ref.rollout.log_prob_use_dynamic_bsz={use_dynamic_bsz}",
-                    f"actor_rollout_ref.actor.ppo_max_token_len_per_gpu={max_prompt_length + max_response_length}",
-                    f"actor_rollout_ref.ref.log_prob_max_token_len_per_gpu={max_prompt_length + max_response_length}",
-                    f"actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu={max_prompt_length + max_response_length}",
+                    f"actor_rollout_ref.actor.ppo_max_token_len_per_gpu=32768",
+                    f"actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=32768",
+                    f"actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=32768",
                     f"actor_rollout_ref.model.path={MODEL_PATH}",
                     "actor_rollout_ref.model.enable_gradient_checkpointing=True",
                     "actor_rollout_ref.actor.optim.lr=1e-6",
@@ -238,7 +238,7 @@ def main_wrapper_deepscaler_topk(is_debug=False):
                     f"actor_rollout_ref.actor.ppo_micro_batch_size={train_micro_batch_size}",
                     f"actor_rollout_ref.actor.fsdp_config.param_offload={offload}",
                     f"actor_rollout_ref.actor.fsdp_config.optimizer_offload={offload}",
-                    "actor_rollout_ref.actor.entropy_coeff=0",
+                    "actor_rollout_ref.actor.entropy_coeff=0.001",
                     "actor_rollout_ref.actor.grad_clip=1.0",
                     f"actor_rollout_ref.actor.loss_agg_mode={loss_agg_mode}",
                     "actor_rollout_ref.actor.ulysses_sequence_parallel_size=1",
@@ -309,7 +309,7 @@ def main_wrapper_deepscaler_ps(is_debug=False):
     kl_loss_coef=0.001
 
     clip_ratio_low=0.2
-    clip_ratio_high=0.28
+    clip_ratio_high=0.2
 
     max_prompt_length=1024
     max_response_length=1024 * 8
@@ -335,7 +335,7 @@ def main_wrapper_deepscaler_ps(is_debug=False):
 
     # Mathematically equivalent
     use_dynamic_bsz=True
-    infer_micro_batch_size=64
+    infer_micro_batch_size=128
     train_micro_batch_size=64
     offload=False
 
@@ -365,9 +365,9 @@ def main_wrapper_deepscaler_ps(is_debug=False):
                     f"actor_rollout_ref.actor.use_dynamic_bsz={use_dynamic_bsz}",
                     f"actor_rollout_ref.ref.log_prob_use_dynamic_bsz={use_dynamic_bsz}",
                     f"actor_rollout_ref.rollout.log_prob_use_dynamic_bsz={use_dynamic_bsz}",
-                    f"actor_rollout_ref.actor.ppo_max_token_len_per_gpu={max_prompt_length + max_response_length}",
-                    f"actor_rollout_ref.ref.log_prob_max_token_len_per_gpu={max_prompt_length + max_response_length}",
-                    f"actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu={max_prompt_length + max_response_length}",
+                    f"actor_rollout_ref.actor.ppo_max_token_len_per_gpu=32768",
+                    f"actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=32768",
+                    f"actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=32768",
                     f"actor_rollout_ref.model.path={MODEL_PATH}",
                     "actor_rollout_ref.model.enable_gradient_checkpointing=True",
                     "actor_rollout_ref.actor.optim.lr=1e-6",
@@ -377,7 +377,7 @@ def main_wrapper_deepscaler_ps(is_debug=False):
                     f"actor_rollout_ref.actor.ppo_micro_batch_size={train_micro_batch_size}",
                     f"actor_rollout_ref.actor.fsdp_config.param_offload={offload}",
                     f"actor_rollout_ref.actor.fsdp_config.optimizer_offload={offload}",
-                    "actor_rollout_ref.actor.entropy_coeff=0",
+                    "actor_rollout_ref.actor.entropy_coeff=0.001",
                     "actor_rollout_ref.actor.grad_clip=1.0",
                     f"actor_rollout_ref.actor.loss_agg_mode={loss_agg_mode}",
                     "actor_rollout_ref.actor.ulysses_sequence_parallel_size=1",

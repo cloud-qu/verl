@@ -130,6 +130,7 @@ class PosteriorSampler:
         local_alpha = []
         local_beta = []
         for index in candidate_indices:
+            index = str(index)
             if index not in self.alpha.keys():
                 self.alpha[index] = self.prior_alpha
             local_alpha.append(self.alpha[index])
@@ -183,6 +184,7 @@ class PosteriorSampler:
         """
         indices = batch_candidates_dict['index']
         for idx, s in zip(indices, y):
+            idx = str(idx)
             self.alpha[idx] += s * self.args.actor_rollout_ref.rollout.n
             self.beta[idx] += (1 - s)  * self.args.actor_rollout_ref.rollout.n
         return None, None, None

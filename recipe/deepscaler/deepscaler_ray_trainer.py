@@ -99,10 +99,10 @@ def our_group_reward(batch, acc, task_sampler, batch_dict, metrics, sampled_acqu
         uid_reward_list.append(uid_rewards.sum()/len(uid_rewards)) # avg accuracy for a query
         
         # Check if all rewards are 0 or all are 1 for this uid, i.e., for the question, no/all responses are correct
-        if (uid_rewards == 0).all():
+        if (uid_rewards.sum()/len(uid_rewards) == 0):
             valid_mask[uid_mask] = False
             solve_none += 1
-        elif (uid_rewards == 1).all():
+        elif (uid_rewards.sum()/len(uid_rewards) == 1):
             valid_mask[uid_mask] = False
             solve_all += 1
     success_rate = torch.tensor(uid_reward_list)
@@ -426,7 +426,7 @@ class OurRayPPOTrainer(RayPPOTrainer):
                             task_sampler=self.task_sampler,
                             batch_dict=batch_dict,
                             metrics=metrics,
-                            sampled_acquisition_score=sampled_acquisition_score,
+                            sampled_acquisition_score=sampled_acquisition_score if self.task_sampler is not None else None,
                         )
                         #############
 
