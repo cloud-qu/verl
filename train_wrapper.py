@@ -11,8 +11,8 @@ from recipe.deepscaler.main_deepscaler_remote import main
 
 def main_wrapper_deepscaler_uniform(is_debug=False):
     if is_debug:
-        nnodes = 2
-        n_gpus_per_node=2
+        nnodes = 1
+        n_gpus_per_node=8
     else:
         nnodes = 2
         n_gpus_per_node=4
@@ -79,6 +79,7 @@ def main_wrapper_deepscaler_uniform(is_debug=False):
                     f"actor_rollout_ref.actor.kl_loss_coef={kl_loss_coef}",
                     f"actor_rollout_ref.actor.clip_ratio_low={clip_ratio_low}",
                     f"actor_rollout_ref.actor.clip_ratio_high={clip_ratio_high}",
+                    "actor_rollout_ref.actor.clip_ratio_c=10.0",
                     f"algorithm.adv_estimator={adv_estimator}",
                     f"algorithm.use_kl_in_reward={use_kl_in_reward}",
                     f"algorithm.kl_ctrl.kl_coef={kl_coef}",
@@ -89,9 +90,9 @@ def main_wrapper_deepscaler_uniform(is_debug=False):
                     f"actor_rollout_ref.actor.use_dynamic_bsz={use_dynamic_bsz}",
                     f"actor_rollout_ref.ref.log_prob_use_dynamic_bsz={use_dynamic_bsz}",
                     f"actor_rollout_ref.rollout.log_prob_use_dynamic_bsz={use_dynamic_bsz}",
-                    f"actor_rollout_ref.actor.ppo_max_token_len_per_gpu=32768",
-                    f"actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=32768",
-                    f"actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=32768",
+                    f"actor_rollout_ref.actor.ppo_max_token_len_per_gpu=28000",
+                    f"actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=28000",
+                    f"actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=28000",
                     f"actor_rollout_ref.model.path={MODEL_PATH}",
                     "actor_rollout_ref.model.enable_gradient_checkpointing=True",
                     "actor_rollout_ref.actor.optim.lr=1e-6",
@@ -216,6 +217,7 @@ def main_wrapper_deepscaler_topk(is_debug=False):
                     f"actor_rollout_ref.actor.kl_loss_coef={kl_loss_coef}",
                     f"actor_rollout_ref.actor.clip_ratio_low={clip_ratio_low}",
                     f"actor_rollout_ref.actor.clip_ratio_high={clip_ratio_high}",
+                    "actor_rollout_ref.actor.clip_ratio_c=10.0",
                     f"algorithm.adv_estimator={adv_estimator}",
                     f"algorithm.use_kl_in_reward={use_kl_in_reward}",
                     f"algorithm.kl_ctrl.kl_coef={kl_coef}",
@@ -226,9 +228,9 @@ def main_wrapper_deepscaler_topk(is_debug=False):
                     f"actor_rollout_ref.actor.use_dynamic_bsz={use_dynamic_bsz}",
                     f"actor_rollout_ref.ref.log_prob_use_dynamic_bsz={use_dynamic_bsz}",
                     f"actor_rollout_ref.rollout.log_prob_use_dynamic_bsz={use_dynamic_bsz}",
-                    f"actor_rollout_ref.actor.ppo_max_token_len_per_gpu=32768",
-                    f"actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=32768",
-                    f"actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=32768",
+                    f"actor_rollout_ref.actor.ppo_max_token_len_per_gpu=28000",
+                    f"actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=28000",
+                    f"actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=28000",
                     f"actor_rollout_ref.model.path={MODEL_PATH}",
                     "actor_rollout_ref.model.enable_gradient_checkpointing=True",
                     "actor_rollout_ref.actor.optim.lr=1e-6",
@@ -355,6 +357,7 @@ def main_wrapper_deepscaler_ps(is_debug=False):
                     f"actor_rollout_ref.actor.kl_loss_coef={kl_loss_coef}",
                     f"actor_rollout_ref.actor.clip_ratio_low={clip_ratio_low}",
                     f"actor_rollout_ref.actor.clip_ratio_high={clip_ratio_high}",
+                    "actor_rollout_ref.actor.clip_ratio_c=10.0",
                     f"algorithm.adv_estimator={adv_estimator}",
                     f"algorithm.use_kl_in_reward={use_kl_in_reward}",
                     f"algorithm.kl_ctrl.kl_coef={kl_coef}",
@@ -365,9 +368,9 @@ def main_wrapper_deepscaler_ps(is_debug=False):
                     f"actor_rollout_ref.actor.use_dynamic_bsz={use_dynamic_bsz}",
                     f"actor_rollout_ref.ref.log_prob_use_dynamic_bsz={use_dynamic_bsz}",
                     f"actor_rollout_ref.rollout.log_prob_use_dynamic_bsz={use_dynamic_bsz}",
-                    f"actor_rollout_ref.actor.ppo_max_token_len_per_gpu=32768",
-                    f"actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=32768",
-                    f"actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=32768",
+                    f"actor_rollout_ref.actor.ppo_max_token_len_per_gpu=28000",
+                    f"actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=28000",
+                    f"actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=28000",
                     f"actor_rollout_ref.model.path={MODEL_PATH}",
                     "actor_rollout_ref.model.enable_gradient_checkpointing=True",
                     "actor_rollout_ref.actor.optim.lr=1e-6",
@@ -430,7 +433,7 @@ if __name__ == "__main__":
     print(f"slurm_job_id: {slurm_job_id}")
     slurm_job_id = str(slurm_job_id)
 
-    #main_wrapper_deepscaler_uniform(is_debug=True)
+    main_wrapper_deepscaler_uniform(is_debug=True)
     if slurm_job_id == "5163046":
         main_wrapper_deepscaler_uniform()
     elif slurm_job_id == "5163047":
