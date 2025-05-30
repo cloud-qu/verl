@@ -109,6 +109,8 @@ class PosteriorSampler:
         self.sample_std = args.tasksampler.bandit_sample_std
         self.lower_bound = args.tasksampler.bandit_lower_bound
         self.upper_bound = args.tasksampler.bandit_upper_bound
+        self.upper_bound_decay_steps = args.tasksampler.bandit_upper_decay_steps
+        self.upper_bound_decay_lower = args.tasksampler.bandit_upper_decay_lower
         self.sampling_strategy = args.tasksampler.bandit_sample_strategy
         if init:
             self.initialize_from_json(init_dir)
@@ -175,6 +177,10 @@ class PosteriorSampler:
             sampled_index = np.argsort(distances)[:self.real_batch_size]
     
         batch_candidates_dict = {k: v[sampled_index] for k, v in batch_candidates_dict.items()}
+        # Step 4: 更新上界
+        if self.upper_bound_decay_steps > 0:
+            decay_factor = (self.upper_bound - self.upper_bound_decay_lower) / self.upper_bound_decay_steps
+            self.upper_bound = max(self.upper_bound - decay_factor, self.upper_bound_decay_lower)
         return batch_candidates_dict, torch.tensor(sampled_r[sampled_index])#.to('cuda')
 
     def train(self, batch_candidates_dict, y):
