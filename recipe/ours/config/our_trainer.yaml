@@ -10,6 +10,14 @@ data:
   gen_batch_size: ${data.train_batch_size}
 
 
+reward_model:
+  reward_manager: deepscaler
+  overlong_buffer: 
+    enable: False # We try to avoid forgetting to set enable
+    len: 0
+    penalty_factor: 0.0
+    log: False
+
 algorithm:
   filter_groups:
     enable: False # We try to avoid forgetting to set enable
@@ -18,6 +26,7 @@ algorithm:
 
 trainer:
   project_name: verl-our
+
 
 tasksampler:
   framework: 0 #0: uniform; 1: gdro; 2: cvar; 3: mpts

@@ -109,7 +109,7 @@ def our_group_reward(batch, acc, task_sampler, batch_dict, metrics, sampled_acqu
     if task_sampler is not None:
         ts_loss, ts_recon_loss, ts_kl_loss = task_sampler.train(batch_dict, success_rate)
         if sampled_acquisition_score is not None:
-            metrics['tasksample/train_corr'] = np.corrcoef(sampled_acquisition_score.squeeze().cpu().detach().numpy(), (-success_rate).squeeze().cpu().detach().numpy())[0,1]
+            metrics['tasksample/train_corr'] = np.corrcoef(sampled_acquisition_score.squeeze().detach().numpy(), (-success_rate).squeeze().cpu().detach().numpy())[0,1]
             metrics['tasksample/sampler_loss'] = ts_loss
             metrics['tasksample/recon_loss'] = ts_recon_loss
             metrics['tasksample/kl_loss'] = ts_kl_loss
@@ -154,17 +154,17 @@ class OurRayPPOTrainer(RayPPOTrainer):
         #####task sampler###########
         self.task_sampler = None
         if self.config.tasksampler.framework != 0:
-            from .MPModel.mpts_llm import (TS4LLM, HistorySampler,
-                                           PosteriorSampler)
+            from recipe.MPModel.mpts_llm import (TS4LLM, HistorySampler,
+                                                 PosteriorSampler)
 
             # self.task_sampler = TS4LLM(args=self.config, tokenizer=self.tokenizer, device='cuda')
             if self.config.tasksampler.framework == 4:
-                self.task_sampler = PosteriorSampler(args=self.config, total_num_samples=20000, init=self.config.tasksampler.bandit_init, init_dir=self.config.tasksampler.bandit_init_dir)
+                self.task_sampler = PosteriorSampler(args=self.config, total_num_samples=40315, init=self.config.tasksampler.bandit_init, init_dir=self.config.tasksampler.bandit_init_dir)
                 self.config.trainer.total_epochs = int(self.config.tasksampler.ts_ratio*self.config.trainer.total_epochs)
                 if self.config.tasksampler.bandit_load_dir != '':
                     self.task_sampler.load(self.config.tasksampler.bandit_load_dir)
             elif self.config.tasksampler.framework == 5:#srpo
-                self.task_sampler = HistorySampler(total_num_samples=20000)
+                self.task_sampler = HistorySampler(total_num_samples=40315)
                 self.config.tasksampler.ts_ratio = 1
                 self.task_sampler.load(self.config.actor_rollout_ref.model.path)
             elif self.config.tasksampler.framework == 6: #dapo
@@ -312,7 +312,10 @@ class OurRayPPOTrainer(RayPPOTrainer):
         # currently, we only support validation using the reward_function.
         if self.val_reward_fn is not None and self.config.trainer.get("val_before_train", True):
             val_metrics = self._validate()
+            test_score = None
             for key in val_metrics.keys():
+                if test_score is None and 'reward/mean@' in key:
+                    test_score = val_metrics[key]
                 if 'acc/mean@' in key:
                     test_score = val_metrics[key]
             val_metrics['val/test_score/'] = test_score
@@ -423,11 +426,11 @@ class OurRayPPOTrainer(RayPPOTrainer):
                         ##############
                         metrics = our_group_reward(
                             batch=new_batch,
-                            acc=reward_extra_infos_dict['acc'],#reward_tensor,
+                            acc=reward_extra_infos_dict['acc'] if 'acc' in reward_extra_infos_dict.keys() else reward_tensor,
                             task_sampler=self.task_sampler,
                             batch_dict=batch_dict,
                             metrics=metrics,
-                            sampled_acquisition_score=sampled_acquisition_score,
+                            sampled_acquisition_score=sampled_acquisition_score if self.task_sampler is not None else None,
                         )
                         #############
 
@@ -541,7 +544,10 @@ class OurRayPPOTrainer(RayPPOTrainer):
                     if self.val_reward_fn is not None and self.config.trainer.test_freq > 0 and (is_last_step or self.global_steps % self.config.trainer.test_freq == 0):
                         with _timer("testing", timing_raw):
                             val_metrics: dict = self._validate()
+                            test_score = None
                             for key in val_metrics.keys():
+                                if test_score is None and 'reward/mean@' in key:
+                                    test_score = val_metrics[key]
                                 if 'acc/mean@' in key:
                                     test_score = val_metrics[key]
                             val_metrics['val/test_score/'] = test_score

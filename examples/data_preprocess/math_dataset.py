@@ -38,8 +38,13 @@ if __name__ == "__main__":
     # 'lighteval/MATH' is no longer available on huggingface.
     # Use mirror repo: DigitalLearningGmbH/MATH-lighteval
     data_source = "DigitalLearningGmbH/MATH-lighteval"
-    print(f"Loading the {data_source} dataset from huggingface...", flush=True)
-    dataset = datasets.load_dataset(data_source, trust_remote_code=True)
+    local_data_source = "/home/quy/verl/data/math/raw/data"
+    print(f"Loading the {local_data_source} dataset from huggingface...", flush=True)
+    # dataset = datasets.load_dataset(data_source, trust_remote_code=True)
+    dataset = datasets.load_dataset('parquet', data_files={
+        "train": os.path.join(local_data_source, "train-00000-of-00001.parquet"),
+        "test": os.path.join(local_data_source, "test-00000-of-00001.parquet")
+    })
 
     train_dataset = dataset["train"]
     test_dataset = dataset["test"]
