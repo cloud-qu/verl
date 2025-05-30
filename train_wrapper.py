@@ -444,7 +444,7 @@ def main_wrapper_deepscaler_ps_noinit(is_debug=False):
     TEST_FILE=f"{RAY_DATA_HOME}/recipe/deepscaler/processed_data/aime.parquet"
     BANDIT_INIT_PATH=f"{RAY_DATA_HOME}/recipe/deepscaler/data/index_score.json"
     project_name='deepscaler'
-    exp_name='verl-deepscaler-1.5b-h100-ps-2n'
+    exp_name='verl-deepscaler-1.5b-h100-ps-noinit-2n'
     adv_estimator='grpo'
 
     use_kl_in_reward=False
@@ -587,7 +587,7 @@ def main_wrapper_deepscaler_topk_noinit(is_debug=False):
     TEST_FILE=f"{RAY_DATA_HOME}/recipe/deepscaler/processed_data/aime.parquet"
     BANDIT_INIT_PATH=f"{RAY_DATA_HOME}/recipe/deepscaler/data/index_score.json"
     project_name='deepscaler'
-    exp_name='verl-deepscaler-1.5b-h100-topk-2n'
+    exp_name='verl-deepscaler-1.5b-h100-topk-noinit-2n'
     adv_estimator='grpo'
 
     use_kl_in_reward=False
@@ -729,7 +729,7 @@ def main_wrapper_deepscaler_srpo(is_debug=False):
     TEST_FILE=f"{RAY_DATA_HOME}/recipe/deepscaler/processed_data/aime.parquet"
     BANDIT_INIT_PATH=f"{RAY_DATA_HOME}/recipe/deepscaler/data/index_score.json"
     project_name='deepscaler'
-    exp_name='verl-deepscaler-1.5b-h100-topk-2n'
+    exp_name='verl-deepscaler-1.5b-h100-srpo-2n'
     adv_estimator='grpo'
 
     use_kl_in_reward=False
@@ -861,14 +861,13 @@ def main_wrapper_deepscaler_ps_upperdecay(is_debug=False):
     # 设置训练参数
     WORKING_DIR=os.path.dirname(os.path.abspath(__file__))
     RAY_DATA_HOME=f"{WORKING_DIR}"
-    # MODEL_PATH=f"{RAY_DATA_HOME}/models/DeepSeek-R1-Distill-Qwen-1.5B"
-    MODEL_PATH=f"/home/quy/deepscaler/hfmodels/DeepSeek-R1-Distill-Qwen-1.5B"
+    MODEL_PATH=f"{RAY_DATA_HOME}/models/DeepSeek-R1-Distill-Qwen-1.5B"
     CKPTS_DIR=f"{RAY_DATA_HOME}/ckpts/deepscaler/verl-deepscaler-1.5b-h100"
     TRAIN_FILE=f"{RAY_DATA_HOME}/recipe/deepscaler/processed_data/train.parquet"
     TEST_FILE=f"{RAY_DATA_HOME}/recipe/deepscaler/processed_data/aime.parquet"
     BANDIT_INIT_PATH=f"{RAY_DATA_HOME}/recipe/deepscaler/data/index_score.json"
     project_name='deepscaler'
-    exp_name='verl-deepscaler-1.5b-h100-ps-2n'
+    exp_name='verl-deepscaler-1.5b-h100-ps-upperdecay-2n'
     adv_estimator='grpo'
 
     use_kl_in_reward=False

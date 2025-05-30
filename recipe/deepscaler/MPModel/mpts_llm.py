@@ -257,6 +257,8 @@ class HistorySampler:
         self.num_samples = total_num_samples
         # self.scores = np.zeros(total_num_samples)
         self.scores = {}
+        for i in range(total_num_samples):
+            self.scores[str(i)] = 0.0
 
     def sample_batch(self, batch_candidates_dict):
         return batch_candidates_dict, None
@@ -268,6 +270,7 @@ class HistorySampler:
         """
         indices = batch_candidates_dict['index']
         for idx, s in zip(indices, y):
+            idx = str(idx)
             self.scores[idx] = s
         return None, None, None
     
