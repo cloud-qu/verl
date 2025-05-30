@@ -86,5 +86,5 @@ python examples/data_preprocess/math_dataset.py --local_dir='data/math'
 # wandb
 pip install wandb
 export WANDB_BASE_URL="http://182.18.90.106:8777"
-export WANDB_API_KEY="e07f72e77a1e06646e8091c6fd2e8b1c9a197a17"
+export WANDB_API_KEY="local-66f3d1798a14c58de8f6e44c972276ff3799d7a7"
 wandb login --relogin "$WANDB_API_KEY"

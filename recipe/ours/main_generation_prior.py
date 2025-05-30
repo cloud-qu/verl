@@ -60,6 +60,7 @@ def main(config):
         dataset['responses'] = np.array([[""]*config.data.n_samples for _ in range(len(dataset))]).reshape(len(dataset), config.data.n_samples).tolist()
 
     # 选择 responses 为空的行（为空列表或 NaN）
+    n_samples = config.data.n_samples
     missing_mask = dataset['responses'].isna() | dataset['responses'].apply(lambda x: len(x[0]) == 0)
     if missing_mask.sum() != 0:
 
@@ -144,7 +145,6 @@ def main(config):
             output_text_unpad = [text.replace(pad_token, '') for text in output_text]
 
             # 将输出 reshape 成 (n_data, n_samples)
-            n_samples = config.data.n_samples
             num_generated = len(output_text_unpad)
             n_data_generated = num_generated // n_samples
             batch_responses = np.array(output_text_unpad).reshape(n_data_generated, n_samples).tolist()
@@ -225,6 +225,24 @@ def main(config):
     os.makedirs(output_dir, exist_ok=True)
     with open(os.path.join(output_dir, 'prompt_score.json'), 'w') as f:
         json.dump(saved_data, f, indent=4)
+
+    
+    all_prompts = dataset['prompt'].tolist()
+    all_idx = []
+    for extra_info in dataset['extra_info']:
+        all_idx.append(extra_info['index'])
+    json_path = os.path.join(output_dir, 'prompt_score.json')
+    with open(json_path, 'r') as f:
+        score_data = json.load(f)
+
+    index_score = {}
+
+    for idx, prompt in zip(all_idx, all_prompts):
+        if prompt[0]['content'] in score_data.keys():
+            index_score[str(idx)] = score_data[prompt[0]['content']]
+
+    with open(os.path.join(os.path.dirname(json_path), 'index_score.json'), 'w') as f:
+        json.dump(index_score, f, indent=4)
 
     csv_path = os.path.join(output_dir, 'pass.csv')
     dataset_name = os.path.basename(config.data.path)
