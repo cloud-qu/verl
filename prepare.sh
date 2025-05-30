@@ -69,12 +69,13 @@ pip install --no-deps -e .
 #prepare deepscaler data
 cd  recipe/deepscaler
 python deepscaler_dataset.py --local_dir='deepscaler'
-mv -rf deepscaler ../../data/
+mv deepscaler ../../data/
 cd ../..
 
 #prepare math
 huggingface-cli download --repo-type dataset --resume-download DigitalLearningGmbH/MATH-lighteval --local-dir data/math/raw
 python examples/data_preprocess/math_dataset.py --local_dir='data/math'
+# bash recipe/ours/scripts/generation_prior.sh #math train prior
 
 # download model
 mkdir -p models

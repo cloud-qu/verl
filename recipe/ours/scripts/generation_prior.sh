@@ -1,16 +1,16 @@
 set -x
 
-data_path=/home/quy/verl/data/math/train.parquet
-save_path=/home/quy/verl/data/math/train_prior.parquet
-model_path=/home/quy/deepscaler/hfmodels/DeepSeek-R1-Distill-Qwen-1.5B
+data_path=~/verl/data/math/train.parquet
+save_path=~/verl/data/math/train_prior.parquet
+model_path=~/verl/models/DeepSeek-R1-Distill-Qwen-1.5B
 
 python3 -m recipe.ours.main_generation_prior \
     trainer.nnodes=1 \
-    trainer.n_gpus_per_node=3 \
+    trainer.n_gpus_per_node=8 \
     data.path=$data_path \
     data.prompt_key=prompt \
     data.n_samples=8 \
-    data.batch_size=96 \
+    data.batch_size=256 \
     data.output_path=$save_path \
     model.path=$model_path \
     +model.trust_remote_code=True \
