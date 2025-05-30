@@ -79,6 +79,6 @@ huggingface-cli download --resume-download deepseek-ai/DeepSeek-R1-Distill-Qwen-
 
 # wandb
 pip install wandb
-export WANDB_BASE_URL="http://182.18.90.106:8777"
+# export WANDB_BASE_URL="http://182.18.90.106:8777"
 export WANDB_API_KEY="e07f72e77a1e06646e8091c6fd2e8b1c9a197a17"
 wandb login --relogin "$WANDB_API_KEY"

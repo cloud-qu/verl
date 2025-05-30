@@ -105,16 +105,21 @@ class IndexRLHFDataset(RLHFDataset):
         
         # 筛选数据
         try:
-            filtered_df = self.dataframe[valid_row_indices]
-            print(f"筛选得到行数: {len(filtered_df)}")
+            # filtered_df = self.dataframe[valid_row_indices]
+            # print(f"筛选得到行数: {len(filtered_df)}")
+            self.dataframe = self.dataframe.filter(
+                lambda doc: str(doc['extra_info']['index']) in indices_to_keep,
+                num_proc=self.num_workers,
+                desc=f"Filtering acc == 1",
+            )
             
             # 检查筛选结果
-            if len(filtered_df) == 0:
-                print("错误: 筛选后数据为空，保持数据集不变")
-                return
+            # if len(filtered_df) == 0:
+            #     print("错误: 筛选后数据为空，保持数据集不变")
+            #     return
                 
             # 重置索引
-            self.dataframe = filtered_df.reset_index(drop=True)
+            # self.dataframe = filtered_df.reset_index(drop=True)
             
             # 验证重置索引后的数据帧
             print(f"重置索引后数据行数: {len(self.dataframe)}")

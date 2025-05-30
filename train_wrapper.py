@@ -861,8 +861,7 @@ def main_wrapper_deepscaler_ps_upperdecay(is_debug=False):
     # 设置训练参数
     WORKING_DIR=os.path.dirname(os.path.abspath(__file__))
     RAY_DATA_HOME=f"{WORKING_DIR}"
-    # MODEL_PATH=f"{RAY_DATA_HOME}/models/DeepSeek-R1-Distill-Qwen-1.5B"
-    MODEL_PATH=f"/home/quy/deepscaler/hfmodels/DeepSeek-R1-Distill-Qwen-1.5B"
+    MODEL_PATH=f"{RAY_DATA_HOME}/models/DeepSeek-R1-Distill-Qwen-1.5B"
     CKPTS_DIR=f"{RAY_DATA_HOME}/ckpts/deepscaler/verl-deepscaler-1.5b-h100"
     TRAIN_FILE=f"{RAY_DATA_HOME}/recipe/deepscaler/processed_data/train.parquet"
     TEST_FILE=f"{RAY_DATA_HOME}/recipe/deepscaler/processed_data/aime.parquet"
