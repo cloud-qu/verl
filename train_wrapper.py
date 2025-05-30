@@ -1001,7 +1001,7 @@ if __name__ == "__main__":
     print(f"slurm_job_id: {slurm_job_id}")
     slurm_job_id = str(slurm_job_id)
 
-    main_wrapper_deepscaler_ps_upperdecay(is_debug=True)
+    #main_wrapper_deepscaler_ps_upperdecay(is_debug=True)
     if slurm_job_id == "5163046":
         main_wrapper_deepscaler_uniform()
     elif slurm_job_id == "5163047":
