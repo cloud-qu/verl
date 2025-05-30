@@ -66,10 +66,15 @@ echo "Successfully installed all packages"
 
 pip install --no-deps -e .
 
+#prepare deepscaler data
 cd  recipe/deepscaler
-python deepscaler_dataset.py --local_dir='processed_data'
+python deepscaler_dataset.py --local_dir='deepscaler'
+mv -rf deepscaler ../../data/
 cd ../..
 
+#prepare math
+huggingface-cli download --repo-type dataset --resume-download DigitalLearningGmbH/MATH-lighteval --local-dir data/math/raw
+python examples/data_preprocess/math_dataset.py --local_dir='data/math'
 
 # download model
 mkdir -p models
