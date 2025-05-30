@@ -38,7 +38,7 @@ if __name__ == "__main__":
     # 'lighteval/MATH' is no longer available on huggingface.
     # Use mirror repo: DigitalLearningGmbH/MATH-lighteval
     data_source = "DigitalLearningGmbH/MATH-lighteval"
-    local_data_source = "~/verl/data/math/raw/data"
+    local_data_source = f"{os.environ.get('HOME')}/verl/data/math/raw/data"
     if os.path.exists(local_data_source):
         print(f"Loading the {local_data_source} dataset from huggingface...", flush=True)
         # dataset = datasets.load_dataset(data_source, trust_remote_code=True)
