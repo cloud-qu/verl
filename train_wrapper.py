@@ -1011,5 +1011,10 @@ if __name__ == "__main__":
         main_wrapper_deepscaler_ps_noinit() 
     elif slurm_job_id == "5166125":
         main_wrapper_deepscaler_topk_noinit()
+    elif slurm_job_id == "5166775":
+        main_wrapper_deepscaler_ps_upperdecay() 
+    elif slurm_job_id == "5166776":
+        main_wrapper_deepscaler_srpo() 
+    
     else:
         raise ValueError(f"Invalid slurm job id: {slurm_job_id}")
