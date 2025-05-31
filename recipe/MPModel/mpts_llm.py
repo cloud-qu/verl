@@ -270,6 +270,7 @@ class HistorySampler:
         """
         indices = batch_candidates_dict['index']
         for idx, s in zip(indices, y):
+            idx = str(idx)
             self.scores[idx] = s
         return None, None, None
     
