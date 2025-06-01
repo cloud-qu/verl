@@ -79,7 +79,7 @@ pip install -U huggingface_hub
 huggingface-cli download --resume-download deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B --local-dir models/DeepSeek-R1-Distill-Qwen-1.5B
 
 #prepare math
-huggingface-cli download --repo-type dataset --resume-download DigitalLearningGmbH/MATH-lighteval --local-dir data/math/raw
+# huggingface-cli download --repo-type dataset --resume-download DigitalLearningGmbH/MATH-lighteval --local-dir data/math/raw
 python examples/data_preprocess/math_dataset.py --local_dir='data/math'
 # bash recipe/ours/scripts/generation_prior.sh #math train prior
 

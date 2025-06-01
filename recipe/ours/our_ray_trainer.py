@@ -29,6 +29,7 @@ from typing import Dict, Optional, Type
 import numpy as np
 import torch
 from omegaconf import OmegaConf, open_dict
+from scipy.stats import spearmanr, wilcoxon
 from torch.utils.data import Dataset, Sampler
 from torchdata.stateful_dataloader import StatefulDataLoader
 from tqdm import tqdm
@@ -109,7 +110,21 @@ def our_group_reward(batch, acc, task_sampler, batch_dict, metrics, sampled_acqu
     if task_sampler is not None:
         ts_loss, ts_recon_loss, ts_kl_loss = task_sampler.train(batch_dict, success_rate)
         if sampled_acquisition_score is not None:
-            metrics['tasksample/train_corr'] = np.corrcoef(sampled_acquisition_score.squeeze().detach().numpy(), (-success_rate).squeeze().cpu().detach().numpy())[0,1]
+            x = sampled_acquisition_score.squeeze().detach().numpy()
+            y = (-success_rate).squeeze().detach().cpu().numpy()
+
+            # Pearson
+            metrics['tasksample/train_corr'] = np.corrcoef(x, y)[0, 1]
+            # metrics['tasksample/train_corr'] = np.corrcoef(sampled_acquisition_score.squeeze().detach().numpy(), (-success_rate).squeeze().cpu().detach().numpy())[0,1]
+            spearman_corr, spearman_p = spearmanr(x, y)
+            metrics['tasksample/train_spearman_corr'] = spearman_corr
+            metrics['tasksample/train_spearman_p'] = spearman_p
+            try:
+                wilcoxon_stat, wilcoxon_p = wilcoxon(x, y)
+                metrics['tasksample/train_wilcoxon_stat'] = wilcoxon_stat
+                metrics['tasksample/train_wilcoxon_p'] = wilcoxon_p
+            except ValueError as e:
+                print(f"[Warning] Wilcoxon test skipped: {e}")
             metrics['tasksample/sampler_loss'] = ts_loss
             metrics['tasksample/recon_loss'] = ts_recon_loss
             metrics['tasksample/kl_loss'] = ts_kl_loss
@@ -200,7 +215,7 @@ class OurRayPPOTrainer(RayPPOTrainer):
             collate_fn = default_collate_fn
         self.collate_fn = collate_fn
         if self.task_sampler is not None:
-            train_batch_size = int(self.config.tasksampler.ts_ratio * self.config.data.get("gen_batch_size", self.config.data.train_batch_size))
+            train_batch_size = min(int(self.config.tasksampler.ts_ratio * self.config.data.get("gen_batch_size", self.config.data.train_batch_size)), int(len(train_dataset)//2))
         else:
             train_batch_size = self.config.data.get("gen_batch_size", self.config.data.train_batch_size)
         self.train_batch_size = train_batch_size
