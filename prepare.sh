@@ -4,10 +4,10 @@ set -x
 
 export PS1=""
 source "$(conda info --base)/etc/profile.d/conda.sh"
-# conda create -n verl python=3.10 -y
-# conda activate verl
-conda install nvidia/label/cuda-12.1.0::cuda-tools
-conda install -c nvidia cuda-toolkit
+conda create -n verl python=3.10 -y
+conda activate verl
+# conda install nvidia/label/cuda-12.1.0::cuda-tools
+# conda install -c nvidia cuda-toolkit
 
 USE_MEGATRON=0
 
@@ -66,16 +66,22 @@ echo "Successfully installed all packages"
 
 pip install --no-deps -e .
 
+#prepare deepscaler data
 cd  recipe/deepscaler
-python deepscaler_dataset.py --local_dir='processed_data'
+python deepscaler_dataset.py --local_dir='deepscaler'
+mv deepscaler ../../data/
 cd ../..
 
 
 # download model
-mkdir -p hfmodels
 pip install -U huggingface_hub
 #export HF_ENDPOINT=https://hf-mirror.com
 huggingface-cli download --resume-download deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B --local-dir models/DeepSeek-R1-Distill-Qwen-1.5B
+
+#prepare math
+huggingface-cli download --repo-type dataset --resume-download DigitalLearningGmbH/MATH-lighteval --local-dir data/math/raw
+python examples/data_preprocess/math_dataset.py --local_dir='data/math'
+# bash recipe/ours/scripts/generation_prior.sh #math train prior
 
 # wandb
 pip install wandb

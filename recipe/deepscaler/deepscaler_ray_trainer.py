@@ -154,8 +154,8 @@ class OurRayPPOTrainer(RayPPOTrainer):
         #####task sampler###########
         self.task_sampler = None
         if self.config.tasksampler.framework != 0:
-            from .MPModel.mpts_llm import (TS4LLM, HistorySampler,
-                                           PosteriorSampler)
+            from recipe.MPModel.mpts_llm import (TS4LLM, HistorySampler,
+                                                 PosteriorSampler)
 
             # self.task_sampler = TS4LLM(args=self.config, tokenizer=self.tokenizer, device='cuda')
             if self.config.tasksampler.framework == 4:
