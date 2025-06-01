@@ -45,6 +45,8 @@ tasksampler:
   bandit_target_std: 0.0
   bandit_lower_bound: 0.3
   bandit_upper_bound: 0.7
+  bandit_upper_decay_steps: 0 #700
+  bandit_upper_decay_lower: 0.55
   bandit_sample_std: 0.05
   bandit_init: False
   bandit_init_dir: "/home/quyun/deepscaler/outputs/init_eval_train_1/index_score.json"
