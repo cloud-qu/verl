@@ -4,7 +4,7 @@ export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
 project_name='math'
-exp_name='verl-1.5b-math-topk'
+exp_name='verl-1.5b-math-ps-noinit'
 
 adv_estimator=grpo
 
@@ -133,9 +133,9 @@ python3 -m recipe.ours.main_our \
     trainer.resume_mode=disable \
     tasksampler.ts_ratio=16 \
     tasksampler.framework=4 \
-    tasksampler.bandit_sample_strategy='topk'\
+    tasksampler.bandit_sample_strategy='threshold'\
     tasksampler.bandit_lower_bound=0.3\
     tasksampler.bandit_upper_bound=0.7\
-    tasksampler.bandit_init=True\
+    tasksampler.bandit_init=False\
     tasksampler.bandit_init_dir="${HOME}/verl/recipe/ours/scripts/math/index_score.json"\
     "${@:1}"
