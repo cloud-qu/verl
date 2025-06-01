@@ -1123,7 +1123,7 @@ def main_wrapper_math_uniform(is_debug=False):
                 f"reward_model.overlong_buffer.enable={enable_overlong_buffer}",
                 f"reward_model.overlong_buffer.len={overlong_buffer_len}",
                 f"reward_model.overlong_buffer.penalty_factor={overlong_penalty_factor}",
-                "trainer.logger=['console']",
+                "trainer.logger=['console','wandb']",
                 f"trainer.project_name={project_name}",
                 f"trainer.experiment_name={exp_name}",
                 f"trainer.n_gpus_per_node={n_gpus_per_node}",
@@ -1740,7 +1740,7 @@ if __name__ == "__main__":
     print(f"slurm_job_id: {slurm_job_id}")
     slurm_job_id = str(slurm_job_id)
 
-    main_wrapper_math_uniform(is_debug=True)
+    # main_wrapper_math_uniform(is_debug=True)
     if slurm_job_id == "5163046":
         main_wrapper_deepscaler_uniform()
     elif slurm_job_id == "5163047":
