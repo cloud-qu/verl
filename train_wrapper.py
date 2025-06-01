@@ -1751,10 +1751,14 @@ if __name__ == "__main__":
         main_wrapper_deepscaler_ps_noinit() 
     elif slurm_job_id == "5166125":
         main_wrapper_deepscaler_topk_noinit()
-    elif slurm_job_id == "5166775":
+    elif slurm_job_id == "5167455":
         main_wrapper_deepscaler_ps_upperdecay() 
-    elif slurm_job_id == "5166776":
+    elif slurm_job_id == "5167456":
         main_wrapper_deepscaler_srpo() 
+    elif slurm_job_id == "5167457":
+        main_wrapper_math_uniform() 
+    elif slurm_job_id == "5167458":
+        main_wrapper_math_topk() 
     
     else:
         raise ValueError(f"Invalid slurm job id: {slurm_job_id}")
