@@ -13,6 +13,14 @@ data:
   data_source_key: data_source
   reward_model_key: reward_model
 
+reward_model:
+  reward_manager: deepscaler
+  overlong_buffer: 
+    enable: False # We try to avoid forgetting to set enable
+    len: 0
+    penalty_factor: 0.0
+    log: False
+
 model:
   path: ~/models/Qwen2-7B-Instruct
   external_lib: null

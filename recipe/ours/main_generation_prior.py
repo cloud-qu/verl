@@ -179,7 +179,7 @@ def main(config):
                 reward_data = reward_model_data[i]
                 reward_fn = select_reward_fn(data_source)
                 ground_truth = reward_data['ground_truth']
-                score_lst = [reward_fn(r, ground_truth) for r in response_lst]
+                score_lst = [reward_fn(prompt[0]['content']+r if config.reward_model.reward_manager == 'deepscaler' else r, ground_truth) for i, r in enumerate(response_lst)]
                 max_score = np.max(score_lst)
                 total_scores.append(score_lst)
                 if max_score == 1:
@@ -267,8 +267,12 @@ def select_reward_fn(data_source):
     if data_source in ["lighteval/MATH", "DigitalLearningGmbH/MATH-lighteval"]:
         from verl.utils.reward_score import math
         return math.compute_score
+    elif data_source == 'countdown':
+        from recipe.ours.reward_func.countdown_reward import compute_score
+        return compute_score
     elif data_source == '':
-        from deepscaler.rewards.math_reward import deepscaler_reward_fn
+        from recipe.ours.reward_func.deepscaler_reward import \
+            deepscaler_reward_fn
         return deepscaler_reward_fn
 
 if __name__ == '__main__':
