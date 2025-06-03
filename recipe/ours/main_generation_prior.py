@@ -26,6 +26,7 @@ os.environ['NCCL_DEBUG'] = 'WARN'
 os.environ['TOKENIZERS_PARALLELISM'] = 'true'
 # os.environ['TORCH_COMPILE_DISABLE'] = '1'
 
+import json
 import time
 
 import pandas as pd
@@ -38,6 +39,43 @@ from verl.utils.fs import copy_local_path_from_hdfs
 from verl.utils.hdfs_io import makedirs
 from verl.utils.model import compute_position_id_with_mask
 from verl.workers.fsdp_workers import ActorRolloutRefWorker
+
+
+def eval_score(config, dataset, select_reward_fn):
+    # 后续进行评价指标的计算（与原实现相同）
+    output_dir = os.path.dirname(config.data.output_path)
+    os.makedirs(output_dir, exist_ok=True)      
+    prompts = dataset[config.data.prompt_key]
+    responses = dataset['responses']
+    data_sources = dataset[config.data.data_source_key]
+    reward_model_data = dataset[config.data.reward_model_key]
+
+    passes = 0
+    total = len(dataset)
+    total_scores = []
+    saved_data = {}
+
+    for i in range(total):
+        response_lst = responses[i]
+        data_source = data_sources[i]
+        prompt = prompts[i]
+        reward_data = reward_model_data[i]
+        reward_fn = select_reward_fn(data_source)
+        ground_truth = reward_data['ground_truth']
+        score_lst = [reward_fn(prompt[0]['content']+r if config.reward_model.reward_manager == 'deepscaler' else r, ground_truth) for i, r in enumerate(response_lst)]
+        max_score = np.max(score_lst)
+        total_scores.append(score_lst)
+        if max_score == 1:
+            passes += 1
+        saved_data[prompt[0]['content']] = score_lst
+
+    pass_at_n = passes / total
+    pass_at_1 = np.mean(total_scores)
+    os.makedirs(output_dir, exist_ok=True)
+    with open(os.path.join(output_dir, 'prompt_score.json'), 'w') as f:
+        json.dump(saved_data, f, indent=4)
+    return pass_at_n, pass_at_1
+
 
 
 @hydra.main(config_path='config', config_name='generation_prior', version_base=None)
@@ -160,73 +198,10 @@ def main(config):
             print(f"Batch {batch_idx+1} saved to {config.data.output_path}。")
 
             # 后续进行评价指标的计算（与原实现相同）
-            output_dir = os.path.dirname(config.data.output_path)
-            os.makedirs(output_dir, exist_ok=True)      
-            prompts = dataset[config.data.prompt_key]
-            responses = dataset['responses']
-            data_sources = dataset[config.data.data_source_key]
-            reward_model_data = dataset[config.data.reward_model_key]
+            pass_at_n, pass_at_1 = eval_score(config, dataset, select_reward_fn)
 
-            passes = 0
-            total = len(dataset)
-            total_scores = []
-            saved_data = {}
-
-            for i in range(total):
-                response_lst = responses[i]
-                data_source = data_sources[i]
-                prompt = prompts[i]
-                reward_data = reward_model_data[i]
-                reward_fn = select_reward_fn(data_source)
-                ground_truth = reward_data['ground_truth']
-                score_lst = [reward_fn(prompt[0]['content']+r if config.reward_model.reward_manager == 'deepscaler' else r, ground_truth) for i, r in enumerate(response_lst)]
-                max_score = np.max(score_lst)
-                total_scores.append(score_lst)
-                if max_score == 1:
-                    passes += 1
-                saved_data[prompt[0]['content']] = score_lst
-
-            pass_at_n = passes / total
-            pass_at_1 = np.mean(total_scores)
-            os.makedirs(output_dir, exist_ok=True)
-            with open(os.path.join(output_dir, 'prompt_score.json'), 'w') as f:
-                json.dump(saved_data, f, indent=4)
-
-
-    # 后续进行评价指标的计算（与原实现相同）
+    pass_at_n, pass_at_1 = eval_score(config, dataset, select_reward_fn)
     output_dir = os.path.dirname(config.data.output_path)
-    os.makedirs(output_dir, exist_ok=True)      
-    prompts = dataset[config.data.prompt_key]
-    responses = dataset['responses']
-    data_sources = dataset[config.data.data_source_key]
-    reward_model_data = dataset[config.data.reward_model_key]
-
-    passes = 0
-    total = len(dataset)
-    total_scores = []
-    saved_data = {}
-
-    for i in range(total):
-        response_lst = responses[i]
-        data_source = data_sources[i]
-        prompt = prompts[i]
-        reward_data = reward_model_data[i]
-        reward_fn = select_reward_fn(data_source)
-        ground_truth = reward_data['ground_truth']
-        score_lst = [reward_fn(r, ground_truth) for r in response_lst]
-        max_score = np.max(score_lst)
-        total_scores.append(score_lst)
-        if max_score == 1:
-            passes += 1
-        saved_data[prompt[0]['content']] = score_lst
-
-    pass_at_n = passes / total
-    pass_at_1 = np.mean(total_scores)
-    os.makedirs(output_dir, exist_ok=True)
-    with open(os.path.join(output_dir, 'prompt_score.json'), 'w') as f:
-        json.dump(saved_data, f, indent=4)
-
-    
     all_prompts = dataset['prompt'].tolist()
     all_idx = []
     for extra_info in dataset['extra_info']:
