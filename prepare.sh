@@ -3,8 +3,8 @@
 set -x
 
 export PS1=""
-source "$(conda info --base)/etc/profile.d/conda.sh"
-conda create -n verl python=3.10 -y
+#source "$(conda info --base)/etc/profile.d/conda.sh"
+#conda create -n verl python=3.10 -y
 conda activate verl
 # conda install nvidia/label/cuda-12.1.0::cuda-tools
 # conda install -c nvidia cuda-toolkit
