@@ -97,6 +97,7 @@ def our_group_reward(batch, acc, task_sampler, batch_dict, metrics, sampled_acqu
         uid_mask = uids == uid
         # uid_rewards = reward_tensor[uid_mask].sum(-1)  # Sum rewards for each sequence (n_rollouts,)
         uid_rewards = torch.tensor(acc)[uid_mask]
+        uid_rewards = (uid_rewards >= 1).int()
         uid_reward_list.append(uid_rewards.sum()/len(uid_rewards)) # avg accuracy for a query
         
         # Check if all rewards are 0 or all are 1 for this uid, i.e., for the question, no/all responses are correct
