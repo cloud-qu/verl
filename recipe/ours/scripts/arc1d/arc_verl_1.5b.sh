@@ -3,8 +3,8 @@ set -xeuo pipefail
 export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
-project_name='countdown'
-exp_name='verl-1.5b-countdown'
+project_name='arc1d'
+exp_name='verl-1.5b-arc1d'
 
 adv_estimator=grpo
 
@@ -28,9 +28,9 @@ enable_filter_groups=False
 filter_groups_metric=acc
 max_num_gen_batches=10
 
-train_prompt_bsz=12
+train_prompt_bsz=128
 gen_prompt_bsz=$((train_prompt_bsz * 1))
-train_prompt_mini_bsz=6
+train_prompt_mini_bsz=64
 n_resp_per_prompt=8
 
 # Ray
@@ -124,7 +124,7 @@ python3 -m recipe.ours.main_our \
     trainer.logger=['console'] \
     trainer.project_name="${project_name}" \
     trainer.experiment_name="${exp_name}" \
-    trainer.n_gpus_per_node=3 \
+    trainer.n_gpus_per_node=4 \
     trainer.nnodes="${NNODES}" \
     trainer.val_before_train=False \
     trainer.test_freq=5 \

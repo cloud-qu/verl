@@ -216,7 +216,7 @@ class OurRayPPOTrainer(RayPPOTrainer):
             collate_fn = default_collate_fn
         self.collate_fn = collate_fn
         if self.task_sampler is not None:
-            train_batch_size = min(int(self.config.tasksampler.ts_ratio * self.config.data.get("gen_batch_size", self.config.data.train_batch_size)), int(len(train_dataset)//2))
+            train_batch_size = min(int(self.config.tasksampler.ts_ratio * self.config.data.get("gen_batch_size", self.config.data.train_batch_size)), int(len(train_dataset)))
         else:
             train_batch_size = self.config.data.get("gen_batch_size", self.config.data.train_batch_size)
         self.train_batch_size = train_batch_size
