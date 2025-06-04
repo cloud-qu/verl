@@ -62,7 +62,8 @@ def eval_score(config, dataset, select_reward_fn):
         reward_data = reward_model_data[i]
         reward_fn = select_reward_fn(data_source)
         ground_truth = reward_data['ground_truth']
-        score_lst = [reward_fn(prompt[0]['content']+r if config.reward_model.reward_manager == 'deepscaler' else r, ground_truth) for i, r in enumerate(response_lst)]
+        # score_lst = [reward_fn(prompt[0]['content']+r if config.reward_model.reward_manager == 'deepscaler' else r, ground_truth) for i, r in enumerate(response_lst)]
+        score_lst = [reward_fn(r, ground_truth) for i, r in enumerate(response_lst)]
         max_score = np.max(score_lst)
         total_scores.append(score_lst)
         if max_score == 1:
