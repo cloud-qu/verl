@@ -81,13 +81,13 @@ def compute_score(solution_str, ground_truth, method='strict', format_score=0.1,
     if equation is None:
         if do_print:
             print(f"No equation found")
-        return 0
+        return {'score': 0, 'format_score': 0, 'acc': 0}
     
     # Validate equation uses correct numbers
     if not validate_equation(equation, numbers):
         if do_print:
             print(f"Invalid equation")
-        return format_score
+        return {'score': format_score, 'format_score': format_score, 'acc': 0}
         
     # Evaluate equation
     try:
@@ -95,17 +95,17 @@ def compute_score(solution_str, ground_truth, method='strict', format_score=0.1,
         if result is None:
             if do_print:
                 print(f"Could not evaluate equation")
-            return format_score
+            return {'score': format_score, 'format_score': format_score, 'acc': 0}
             
         if abs(result - target) < 1e-5:  # Account for floating point precision
             if do_print:
                 print(f"Correct equation: {equation} = {result}")
-            return score
+            return {'score': score, 'format_score': 0, 'acc': score}
         else:
             if do_print:
                 print(f"Wrong result: equation = {result}, target = {target}")
-            return format_score
+            return {'score': format_score, 'format_score': format_score, 'acc': 0}
     except:
         if do_print:
             print(f"Error evaluating equation")
-        return format_score 
+        return {'score': format_score, 'format_score': format_score, 'acc': 0}

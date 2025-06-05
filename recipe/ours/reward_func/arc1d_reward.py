@@ -59,7 +59,7 @@ def compute_score(solution_str, ground_truth, method='strict', format_score=0.1,
     if answer_array is None:
         if do_print:
             print(f"No answer_array found")
-        return 0
+        return {'score': 0, 'format_score': 0, 'acc': 0}
     
     try:
         processed_answer_array = extract_numbers(answer_array)
@@ -67,13 +67,13 @@ def compute_score(solution_str, ground_truth, method='strict', format_score=0.1,
         if processed_answer_array == processed_gt_answer_array:
             if do_print:
                 print(f"Correct answer_array: {answer_array} matches ground truth: {gtanswer}")
-            return score
+            return {'score': score, 'format_score': 0, 'acc': 1}
         if len(processed_answer_array) == size:
             if do_print:
                 print(f"Answer array size match")
-            return format_score
-        return 0
+            return {'score': format_score, 'format_score': format_score, 'acc': 0}
+        return {'score': 0, 'format_score': 0, 'acc': 0}
     except:
         if do_print:
             print(f"Error evaluating answer_array")
-        return 0
+        return {'score': 0, 'format_score': 0, 'acc': 0}
