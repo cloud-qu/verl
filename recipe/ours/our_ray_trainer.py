@@ -496,7 +496,10 @@ class OurRayPPOTrainer(RayPPOTrainer):
                                 print(f"{num_gen_batches=}. Keep generating...")
                                 continue
                             else:
-                                raise ValueError(f"{num_gen_batches=} >= {max_num_gen_batches=}." + " Generated too many. Please check if your data are too difficult." + " You could also try set max_num_gen_batches=0 to enable endless trials.")
+                                batch = DataProto.concat([batch, new_batch])
+                                traj_bsz = self.config.data.train_batch_size * self.config.actor_rollout_ref.rollout.n
+                                batch = batch[:traj_bsz]
+                                # raise ValueError(f"{num_gen_batches=} >= {max_num_gen_batches=}." + " Generated too many. Please check if your data are too difficult." + " You could also try set max_num_gen_batches=0 to enable endless trials.")
                         else:
                             # Align the batch
                             traj_bsz = self.config.data.train_batch_size * self.config.actor_rollout_ref.rollout.n
