@@ -4,7 +4,7 @@ export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
 project_name='countdown'
-exp_name='verl-1.5b-countdown'
+exp_name='verl-1.5b-countdown-dapo'
 
 adv_estimator=grpo
 
@@ -24,9 +24,9 @@ overlong_penalty_factor=1.0
 
 loss_agg_mode="token-mean"
 
-enable_filter_groups=False
-filter_groups_metric=acc
-max_num_gen_batches=10
+enable_filter_groups=True
+filter_groups_metric=score
+max_num_gen_batches=4
 
 train_prompt_bsz=256
 gen_prompt_bsz=$((train_prompt_bsz * 1))
@@ -129,7 +129,7 @@ python3 -m recipe.ours.main_our \
     trainer.val_before_train=False \
     trainer.test_freq=5 \
     trainer.save_freq=5 \
-    trainer.total_epochs=20 \
+    trainer.total_epochs=60 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
     tasksampler.ts_ratio=1 \
