@@ -135,5 +135,6 @@ python3 -m recipe.ours.main_our \
     tasksampler.ts_ratio=16 \
     tasksampler.framework=4 \
     tasksampler.bandit_sample_strategy='topk'\
+    tasksampler.bandit_decay_ratio=0.5\
     tasksampler.bandit_init=False\
     "${@:1}"
