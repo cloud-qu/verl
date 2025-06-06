@@ -2056,5 +2056,9 @@ if __name__ == "__main__":
         main_wrapper_math_topk_noinit() 
     elif slurm_job_id == "5170331":
         main_wrapper_math_ps_noinit() 
+    elif slurm_job_id == "5173220":
+        main_wrapper_math_dapo()
+    elif slurm_job_id == "5173221":
+        main_wrapper_math_dapo_thres()
     else:
         raise ValueError(f"Invalid slurm job id: {slurm_job_id}")
