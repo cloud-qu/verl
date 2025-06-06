@@ -21,9 +21,12 @@ class RewardManager():
     """The reward manager.
     """
 
-    def __init__(self, tokenizer, num_examine) -> None:
+    def __init__(self, tokenizer, num_examine,
+        compute_score=None,
+        reward_fn_key="data_source") -> None:
         self.tokenizer = tokenizer
         self.num_examine = num_examine  # the number of batches of decoded responses to print to the console
+        self.compute_score = compute_score
 
     def __call__(self, data: DataProto, return_dict=False):
         """We will expand this function gradually based on the available datasets"""
@@ -63,7 +66,7 @@ class RewardManager():
 
             # select rm_score
             data_source = data_item.non_tensor_batch['data_source']
-            compute_score_fn = _select_rm_score_fn(data_source)
+            compute_score_fn = _select_rm_score_fn(data_source) if self.compute_score is None else self.compute_score
             score = compute_score_fn(solution_str=sequences_str, ground_truth=ground_truth)
             
             # with print_lock:
@@ -76,9 +79,13 @@ class RewardManager():
             return i, score, valid_response_length
 
         # Process items in parallel using ThreadPoolExecutor
-        with ThreadPoolExecutor(max_workers=96) as executor:
-            args = [(i, data[i], already_print_data_sources) for i in range(len(data))]
-            results = list(executor.map(process_item, args))
+        # with ThreadPoolExecutor(max_workers=96) as executor:
+        #     args = [(i, data[i], already_print_data_sources) for i in range(len(data))]
+        #     results = list(executor.map(process_item, args))
+        args_list = [(i, data[i], already_print_data_sources) for i in range(len(data))]
+        results = []
+        for args in args_list:
+            results.append(process_item(args))
 
         # Fill reward tensor with results
         for i, score, valid_response_length in results:

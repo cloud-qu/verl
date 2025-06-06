@@ -82,7 +82,9 @@ huggingface-cli download --resume-download deepseek-ai/DeepSeek-R1-Distill-Qwen-
 #prepare math
 # huggingface-cli download --repo-type dataset --resume-download DigitalLearningGmbH/MATH-lighteval --local-dir data/math/raw
 python examples/data_preprocess/math_dataset.py --local_dir='data/math'
-# bash recipe/ours/scripts/generation_prior.sh #math train prior
+# bash recipe/ours/scripts/math/generation_prior.sh #math train prior
+# python examples/data_preprocess/countdown.py
+# python examples/data_preprocess/arc1d.py
 
 # wandb
 pip install wandb

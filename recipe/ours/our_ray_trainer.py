@@ -97,6 +97,7 @@ def our_group_reward(batch, acc, task_sampler, batch_dict, metrics, sampled_acqu
         uid_mask = uids == uid
         # uid_rewards = reward_tensor[uid_mask].sum(-1)  # Sum rewards for each sequence (n_rollouts,)
         uid_rewards = torch.tensor(acc)[uid_mask]
+        uid_rewards = (uid_rewards >= 1).int()
         uid_reward_list.append(uid_rewards.sum()/len(uid_rewards)) # avg accuracy for a query
         
         # Check if all rewards are 0 or all are 1 for this uid, i.e., for the question, no/all responses are correct
@@ -215,7 +216,7 @@ class OurRayPPOTrainer(RayPPOTrainer):
             collate_fn = default_collate_fn
         self.collate_fn = collate_fn
         if self.task_sampler is not None:
-            train_batch_size = min(int(self.config.tasksampler.ts_ratio * self.config.data.get("gen_batch_size", self.config.data.train_batch_size)), int(len(train_dataset)//2))
+            train_batch_size = min(int(self.config.tasksampler.ts_ratio * self.config.data.get("gen_batch_size", self.config.data.train_batch_size)), int(len(train_dataset)))
         else:
             train_batch_size = self.config.data.get("gen_batch_size", self.config.data.train_batch_size)
         self.train_batch_size = train_batch_size
@@ -495,7 +496,10 @@ class OurRayPPOTrainer(RayPPOTrainer):
                                 print(f"{num_gen_batches=}. Keep generating...")
                                 continue
                             else:
-                                raise ValueError(f"{num_gen_batches=} >= {max_num_gen_batches=}." + " Generated too many. Please check if your data are too difficult." + " You could also try set max_num_gen_batches=0 to enable endless trials.")
+                                batch = DataProto.concat([batch, new_batch])
+                                traj_bsz = self.config.data.train_batch_size * self.config.actor_rollout_ref.rollout.n
+                                batch = batch[:traj_bsz]
+                                # raise ValueError(f"{num_gen_batches=} >= {max_num_gen_batches=}." + " Generated too many. Please check if your data are too difficult." + " You could also try set max_num_gen_batches=0 to enable endless trials.")
                         else:
                             # Align the batch
                             traj_bsz = self.config.data.train_batch_size * self.config.actor_rollout_ref.rollout.n

@@ -77,7 +77,7 @@ if __name__ == '__main__':
     parser.add_argument('--max_target', type=int, default=1000)
     parser.add_argument('--min_number', type=int, default=1)
     parser.add_argument('--max_number', type=int, default=100)
-    parser.add_argument('--train_size', type=int, default=20000)
+    parser.add_argument('--train_size', type=int, default=2000)
     parser.add_argument('--test_size', type=int, default=512)
     parser.add_argument('--template_type', type=str, default='base')
 
@@ -91,14 +91,14 @@ if __name__ == '__main__':
     try:
         raw_dataset = load_dataset('Jiayi-Pan/Countdown-Tasks-3to4', split='train')
     except:
-        local_data_source = f"{os.environ.get('HOME')}/verl/data/countdown34/raw/data"
+        local_data_source = f"{os.environ.get('HOME')}/verl/data/countdown3to4/raw/data"
         if not os.path.exists(local_data_source):
-            os.system('pip install -U huggingface_hub; export HF_ENDPOINT=https://hf-mirror.com; huggingface-cli download --repo-type dataset --resume-download Jiayi-Pan/Countdown-Tasks-3to4 --local-dir data/countdown34/raw')
+            os.system('pip install -U huggingface_hub; export HF_ENDPOINT=https://hf-mirror.com; huggingface-cli download --repo-type dataset --resume-download Jiayi-Pan/Countdown-Tasks-3to4 --local-dir data/countdown3to4/raw')
         if os.path.exists(local_data_source):
-            dataset = load_dataset('parquet', data_files={
-                "train": os.path.join(local_data_source, "train-00000-of-00001.parquet"),
-                "test": os.path.join(local_data_source, "test-00000-of-00001.parquet")
+            raw_dataset = load_dataset('parquet', data_files={
+                "train": os.path.join(local_data_source, "train-00000-of-00001.parquet")
             })
+            raw_dataset = raw_dataset['train']
         else:
             raw_dataset = load_dataset('Jiayi-Pan/Countdown-Tasks-3to4', split='train')
 

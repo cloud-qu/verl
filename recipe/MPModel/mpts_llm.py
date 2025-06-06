@@ -104,6 +104,7 @@ class PosteriorSampler:
         # self.beta = np.ones(total_num_samples) * prior_beta
         self.prior_alpha = prior_alpha
         self.prior_beta = prior_beta
+        self.decay_ratio = args.tasksampler.bandit_decay_ratio
         self.target_mean = args.tasksampler.bandit_target_mean
         self.target_std = args.tasksampler.bandit_target_std
         self.sample_std = args.tasksampler.bandit_sample_std
@@ -191,8 +192,8 @@ class PosteriorSampler:
         indices = batch_candidates_dict['index']
         for idx, s in zip(indices, y):
             idx = str(idx)
-            self.alpha[idx] += s * self.args.actor_rollout_ref.rollout.n
-            self.beta[idx] += (1 - s)  * self.args.actor_rollout_ref.rollout.n
+            self.alpha[idx] = max(self.alpha[idx]*self.decay_ratio + s * self.args.actor_rollout_ref.rollout.n, 1)
+            self.beta[idx] = max(self.beta[idx]*self.decay_ratio + (1 - s)  * self.args.actor_rollout_ref.rollout.n, 1)
         return None, None, None
     
     
