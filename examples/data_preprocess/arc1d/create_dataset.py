@@ -60,7 +60,7 @@ create_and_save_dataset(
 # 创建并保存 test 集
 create_and_save_dataset(
     name="arc_1d",
-    min_size=20,
+    min_size=10,
     max_size=20,
     num_train=3,
     size=512,
