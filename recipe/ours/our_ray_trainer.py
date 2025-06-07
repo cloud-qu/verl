@@ -440,9 +440,14 @@ class OurRayPPOTrainer(RayPPOTrainer):
                             new_batch.non_tensor_batch.update({k: np.array(v) for k, v in reward_extra_infos_dict.items()})
                         
                         ##############
+                        if self.config.task_sampler.bandit_metric == 'acc':
+                            acc = reward_extra_infos_dict['acc'] if 'acc' in reward_extra_infos_dict.keys() else reward_tensor
+                            acc = (acc >= 1).int()  # convert to binary accuracy
+                        else:
+                            acc = reward_tensor
                         metrics = our_group_reward(
                             batch=new_batch,
-                            acc=reward_extra_infos_dict['acc'] if 'acc' in reward_extra_infos_dict.keys() else reward_tensor,
+                            acc=acc,
                             task_sampler=self.task_sampler,
                             batch_dict=batch_dict,
                             metrics=metrics,
