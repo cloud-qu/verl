@@ -129,7 +129,8 @@ python3 -m recipe.ours.main_our \
     trainer.val_before_train=False \
     trainer.test_freq=5 \
     trainer.save_freq=5 \
-    trainer.total_epochs=60 \
+    trainer.total_epochs=2000 \
+    trainer.total_training_steps=200 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
     tasksampler.ts_ratio=1 \

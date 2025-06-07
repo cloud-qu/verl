@@ -4,7 +4,7 @@ export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
 project_name='arc1d'
-exp_name='verl-3b-arc1d-topk-noinit'
+exp_name='verl-3b-arc1d-topkstd-noinit'
 
 adv_estimator=grpo
 
@@ -135,7 +135,7 @@ python3 -m recipe.ours.main_our \
     trainer.resume_mode=disable \
     tasksampler.ts_ratio=16 \
     tasksampler.framework=4 \
-    tasksampler.bandit_sample_strategy='topk'\
+    tasksampler.bandit_sample_strategy='topkstd'\
     tasksampler.bandit_decay_ratio=0.5\
     tasksampler.bandit_init=False\
     "${@:1}"
