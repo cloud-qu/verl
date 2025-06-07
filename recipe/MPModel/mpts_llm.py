@@ -159,7 +159,7 @@ class PosteriorSampler:
         elif self.sampling_strategy == 'topkstd':
             #beta dist std
             stds = np.sqrt((local_alpha * local_beta) / ((local_alpha + local_beta) ** 2 * (local_alpha + local_beta + 1)))
-            sampled_index = np.argsort(stds)[:self.real_batch_size]
+            sampled_index = np.argsort(-stds)[:self.real_batch_size]
         elif self.sampling_strategy == 'threshold':
             in_range_mask = (sampled_r >= self.lower_bound) & (sampled_r <= self.upper_bound)
             in_range_indices = np.where(in_range_mask)[0]
