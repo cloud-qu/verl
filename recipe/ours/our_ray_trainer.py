@@ -441,10 +441,10 @@ class OurRayPPOTrainer(RayPPOTrainer):
                         
                         ##############
                         if self.config.tasksampler.bandit_metric == 'acc':
-                            acc = reward_extra_infos_dict['acc'] if 'acc' in reward_extra_infos_dict.keys() else reward_tensor
+                            acc = torch.tensor(reward_extra_infos_dict['acc'] if 'acc' in reward_extra_infos_dict.keys() else reward_tensor)
                             acc = (acc >= 1).int()  # convert to binary accuracy
                         else:
-                            acc = reward_tensor
+                            acc = torch.tensor(reward_tensor)
                         metrics = our_group_reward(
                             batch=new_batch,
                             acc=acc,
