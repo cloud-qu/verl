@@ -4,7 +4,7 @@ export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
 project_name='arc1d'
-exp_name='verl-3b-arc1d-topk-noinit'
+exp_name='verl-3b-arc1d-topk-noinit-score'
 
 adv_estimator=grpo
 
@@ -84,7 +84,7 @@ python3 -m recipe.ours.main_our \
     actor_rollout_ref.actor.use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.ref.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.rollout.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
-    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*8)) \
+    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*2)) \
     actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
     actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
     actor_rollout_ref.model.path="${MODEL_PATH}" \
@@ -124,7 +124,7 @@ python3 -m recipe.ours.main_our \
     trainer.logger=['console','wandb'] \
     trainer.project_name="${project_name}" \
     trainer.experiment_name="${exp_name}" \
-    trainer.n_gpus_per_node=8 \
+    trainer.n_gpus_per_node=4 \
     trainer.nnodes="${NNODES}" \
     trainer.val_before_train=False \
     trainer.test_freq=5 \
@@ -137,5 +137,6 @@ python3 -m recipe.ours.main_our \
     tasksampler.framework=4 \
     tasksampler.bandit_sample_strategy='topk'\
     tasksampler.bandit_decay_ratio=0.5\
+    tasksampler.bandit_metric='score'\
     tasksampler.bandit_init=False\
     "${@:1}"
