@@ -3,8 +3,8 @@ set -xeuo pipefail
 export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
-project_name='countdown'
-exp_name='verl-1.5b-countdown'
+project_name='math'
+exp_name='verl-7b-math'
 
 adv_estimator=grpo
 
@@ -16,8 +16,8 @@ kl_loss_coef=0.00
 clip_ratio_low=0.2
 clip_ratio_high=0.28
 
-max_prompt_length=$((256))
-max_response_length=$((1024))
+max_prompt_length=$((1024))
+max_response_length=$((1024 * 8))
 enable_overlong_buffer=False
 overlong_buffer_len=$((1024 * 4))
 overlong_penalty_factor=1.0
@@ -30,7 +30,7 @@ max_num_gen_batches=10
 
 train_prompt_bsz=256
 gen_prompt_bsz=$((train_prompt_bsz * 1))
-train_prompt_mini_bsz=64
+train_prompt_mini_bsz=128
 n_resp_per_prompt=8
 
 # Ray
@@ -40,11 +40,11 @@ RUNTIME_ENV=${RUNTIME_ENV:-"${WORKING_DIR}/verl/trainer/runtime_env.yaml"}
 NNODES=${NNODES:-1}
 # Paths
 RAY_DATA_HOME=${RAY_DATA_HOME:-"${HOME}/verl"}
-MODEL_PATH=${MODEL_PATH:-"${RAY_DATA_HOME}/models/Qwen2.5-3B"}
+MODEL_PATH=${MODEL_PATH:-"${RAY_DATA_HOME}/models/DeepSeek-R1-Distill-Qwen-7B"}
 # MODEL_PATH=${MODEL_PATH:-"/home/quy/deepscaler/hfmodels/DeepSeek-R1-Distill-Qwen-1.5B"}
 CKPTS_DIR=${CKPTS_DIR:-"${RAY_DATA_HOME}/ckpts/${project_name}/${exp_name}"}
-TRAIN_FILE=${TRAIN_FILE:-"${RAY_DATA_HOME}/data/countdown3to4/train.parquet"}
-TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/data/countdown3to4/test.parquet"}
+TRAIN_FILE=${TRAIN_FILE:-"${RAY_DATA_HOME}/data/math/train.parquet"}
+TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/data/deepscaler/aime.parquet"}
 # TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/data/dapo/aime-2024.parquet"}
 
 # Algorithm
@@ -84,7 +84,7 @@ python3 -m recipe.ours.main_our \
     actor_rollout_ref.actor.use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.ref.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.rollout.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
-    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
+    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*2)) \
     actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
     actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
     actor_rollout_ref.model.path="${MODEL_PATH}" \
@@ -129,7 +129,7 @@ python3 -m recipe.ours.main_our \
     trainer.val_before_train=False \
     trainer.test_freq=5 \
     trainer.save_freq=5 \
-    trainer.total_epochs=20 \
+    trainer.total_epochs=40 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
     tasksampler.ts_ratio=1 \

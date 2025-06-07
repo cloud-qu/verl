@@ -4,7 +4,7 @@ export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
 project_name='arc1d'
-exp_name='verl-1.5b-arc1d'
+exp_name='verl-3b-arc1d-topk-noinit-score'
 
 adv_estimator=grpo
 
@@ -28,7 +28,7 @@ enable_filter_groups=False
 filter_groups_metric=acc
 max_num_gen_batches=10
 
-train_prompt_bsz=128
+train_prompt_bsz=256
 gen_prompt_bsz=$((train_prompt_bsz * 1))
 train_prompt_mini_bsz=64
 n_resp_per_prompt=8
@@ -85,8 +85,8 @@ python3 -m recipe.ours.main_our \
     actor_rollout_ref.ref.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.rollout.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*2)) \
-    actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*2)) \
-    actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*2)) \
+    actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
+    actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
     actor_rollout_ref.model.path="${MODEL_PATH}" \
     actor_rollout_ref.model.enable_gradient_checkpointing=True \
     actor_rollout_ref.actor.optim.lr=1e-6 \
@@ -121,7 +121,7 @@ python3 -m recipe.ours.main_our \
     reward_model.overlong_buffer.enable=${enable_overlong_buffer} \
     reward_model.overlong_buffer.len=${overlong_buffer_len} \
     reward_model.overlong_buffer.penalty_factor=${overlong_penalty_factor} \
-    trainer.logger=['console'] \
+    trainer.logger=['console','wandb'] \
     trainer.project_name="${project_name}" \
     trainer.experiment_name="${exp_name}" \
     trainer.n_gpus_per_node=4 \
@@ -129,9 +129,14 @@ python3 -m recipe.ours.main_our \
     trainer.val_before_train=False \
     trainer.test_freq=5 \
     trainer.save_freq=5 \
-    trainer.total_epochs=20 \
+    trainer.total_epochs=200 \
+    trainer.total_training_steps=200 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
-    tasksampler.ts_ratio=1 \
-    tasksampler.framework=0 \
+    tasksampler.ts_ratio=16 \
+    tasksampler.framework=4 \
+    tasksampler.bandit_sample_strategy='topk'\
+    tasksampler.bandit_decay_ratio=0.5\
+    tasksampler.bandit_metric='score'\
+    tasksampler.bandit_init=False\
     "${@:1}"

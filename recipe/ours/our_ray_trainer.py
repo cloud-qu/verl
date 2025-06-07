@@ -97,8 +97,8 @@ def our_group_reward(batch, acc, task_sampler, batch_dict, metrics, sampled_acqu
         uid_mask = uids == uid
         # uid_rewards = reward_tensor[uid_mask].sum(-1)  # Sum rewards for each sequence (n_rollouts,)
         uid_rewards = torch.tensor(acc)[uid_mask]
-        uid_rewards = (uid_rewards >= 1).int()
         uid_reward_list.append(uid_rewards.sum()/len(uid_rewards)) # avg accuracy for a query
+        uid_rewards = (uid_rewards >= 1).int()
         
         # Check if all rewards are 0 or all are 1 for this uid, i.e., for the question, no/all responses are correct
         if (uid_rewards.sum()/len(uid_rewards) == 0):
@@ -440,9 +440,14 @@ class OurRayPPOTrainer(RayPPOTrainer):
                             new_batch.non_tensor_batch.update({k: np.array(v) for k, v in reward_extra_infos_dict.items()})
                         
                         ##############
+                        if self.config.tasksampler.bandit_metric == 'acc':
+                            acc = torch.tensor(reward_extra_infos_dict['acc'] if 'acc' in reward_extra_infos_dict.keys() else reward_tensor)
+                            acc = (acc >= 1).int()  # convert to binary accuracy
+                        else:
+                            acc = torch.tensor(reward_tensor)
                         metrics = our_group_reward(
                             batch=new_batch,
-                            acc=reward_extra_infos_dict['acc'] if 'acc' in reward_extra_infos_dict.keys() else reward_tensor,
+                            acc=acc,
                             task_sampler=self.task_sampler,
                             batch_dict=batch_dict,
                             metrics=metrics,

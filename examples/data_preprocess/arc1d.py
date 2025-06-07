@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
     data_source = 'arc1d'
 
-    local_data_source = f"{os.environ.get('HOME')}/verl/examples/data_preprocess/arc1d"
+    local_data_source = f"{os.path.dirname(os.path.abspath(__file__))}/arc1d"
     if os.path.exists(local_data_source):
         raw_dataset = load_dataset('parquet', data_files={
             "train": os.path.join(local_data_source, "train.parquet"),
