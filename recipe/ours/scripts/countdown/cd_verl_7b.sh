@@ -4,7 +4,7 @@ export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
 project_name='countdown'
-exp_name='verl-1.5b-countdown-topk-noinit'
+exp_name='verl-7b-countdown'
 
 adv_estimator=grpo
 
@@ -40,7 +40,7 @@ RUNTIME_ENV=${RUNTIME_ENV:-"${WORKING_DIR}/verl/trainer/runtime_env.yaml"}
 NNODES=${NNODES:-1}
 # Paths
 RAY_DATA_HOME=${RAY_DATA_HOME:-"${HOME}/verl"}
-MODEL_PATH=${MODEL_PATH:-"${RAY_DATA_HOME}/models/Qwen2.5-3B"}
+MODEL_PATH=${MODEL_PATH:-"${RAY_DATA_HOME}/models/Qwen2.5-7B"}
 # MODEL_PATH=${MODEL_PATH:-"/home/quy/deepscaler/hfmodels/DeepSeek-R1-Distill-Qwen-1.5B"}
 CKPTS_DIR=${CKPTS_DIR:-"${RAY_DATA_HOME}/ckpts/${project_name}/${exp_name}"}
 TRAIN_FILE=${TRAIN_FILE:-"${RAY_DATA_HOME}/data/countdown3to4/train.parquet"}
@@ -127,17 +127,12 @@ python3 -m recipe.ours.main_our \
     trainer.n_gpus_per_node=8 \
     trainer.nnodes="${NNODES}" \
     trainer.val_before_train=False \
-    trainer.test_freq=5 \
-    trainer.save_freq=5 \
-    trainer.total_epochs=15 \
+    trainer.test_freq=10 \
+    trainer.save_freq=10 \
+    trainer.total_epochs=200 \
+    trainer.total_training_steps=120 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
-    tasksampler.ts_ratio=8 \
-    tasksampler.framework=4 \
-    tasksampler.bandit_sample_strategy='topk'\
-    tasksampler.bandit_lower_bound=0.3\
-    tasksampler.bandit_upper_bound=0.7\
-    tasksampler.bandit_decay_ratio=0.5\
-    tasksampler.bandit_init=False\
-    tasksampler.bandit_init_dir="${HOME}/verl/recipe/ours/scripts/math/index_score.json"\
+    tasksampler.ts_ratio=1 \
+    tasksampler.framework=0 \
     "${@:1}"
