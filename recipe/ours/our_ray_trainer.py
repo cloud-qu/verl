@@ -177,17 +177,15 @@ class OurRayPPOTrainer(RayPPOTrainer):
             if self.config.tasksampler.framework == 4:
                 self.task_sampler = PosteriorSampler(args=self.config, total_num_samples=40315, init=self.config.tasksampler.bandit_init, init_dir=self.config.tasksampler.bandit_init_dir)
                 self.config.trainer.total_epochs = int(self.config.tasksampler.ts_ratio*self.config.trainer.total_epochs)
+                self.task_sampler.load(self.config.trainer.default_local_dir)
                 if self.config.tasksampler.bandit_load_dir != '':
                     self.task_sampler.load(self.config.tasksampler.bandit_load_dir)
             elif self.config.tasksampler.framework == 5:#srpo
                 self.task_sampler = HistorySampler(total_num_samples=40315)
                 self.config.tasksampler.ts_ratio = 1
-                self.task_sampler.load(self.config.actor_rollout_ref.model.path)
-            elif self.config.tasksampler.framework == 6: #dapo
-                self.candidate_task_batch = None
-                self.config.trainer.rejection_sample = False
-                self.config.trainer.rejection_sample_multiplier = 1
-                self.config.tasksampler.ts_ratio = 1
+                self.task_sampler.load(self.config.trainer.default_local_dir)
+                if self.config.tasksampler.bandit_load_dir != '':
+                    self.task_sampler.load(self.config.tasksampler.bandit_load_dir)
         ############################
         self._create_dataloader(train_dataset, val_dataset, collate_fn, train_sampler)
 
