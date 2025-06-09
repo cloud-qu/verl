@@ -17,7 +17,6 @@ enroot start --rw    --mount /dss/mcmlscratch/0E/di35zis/lab/verl:/workspace/ver
 enroot export verlraw > verl-container.sqsh
 enroot create --name verl verl-container.sqsh
 
-
 python -m venv myvenv
 cd myvenv
 source bin/activate

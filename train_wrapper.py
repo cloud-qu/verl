@@ -2450,7 +2450,7 @@ def main_wrapper_math_7b_dapo(is_debug=False):
                 "trainer.save_freq=5",
                 "trainer.total_epochs=100",
                 f"trainer.default_local_dir={CKPTS_DIR}",
-                "trainer.resume_mode=auto",
+                "trainer.resume_mode=disable",
                 "tasksampler.ts_ratio=1",
                 "tasksampler.framework=0",
             ],
@@ -2464,7 +2464,7 @@ if __name__ == "__main__":
     print(f"slurm_job_id: {slurm_job_id}")
     slurm_job_id = str(slurm_job_id)
 
-    main_wrapper_math_uniform(is_debug=True)
+    main_wrapper_math_7b_dapo(is_debug=True)
     if slurm_job_id == "5163046":
         main_wrapper_deepscaler_uniform()
     elif slurm_job_id == "5163047":
