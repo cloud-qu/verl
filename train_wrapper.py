@@ -2498,5 +2498,7 @@ if __name__ == "__main__":
         main_wrapper_math_7b_uniform()
     elif slurm_job_id == "5173964":
         main_wrapper_math_7b_topk_noinit()
+    elif slurm_job_id == "5174310":
+        main_wrapper_math_7b_dapo()
     else:
         raise ValueError(f"Invalid slurm job id: {slurm_job_id}")
