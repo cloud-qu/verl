@@ -38,6 +38,7 @@ while IFS= read -r line; do
         # Extract steps if present in the path
         if [[ $base_path =~ \{([^}]+)\} ]]; then
             steps="${BASH_REMATCH[1]}"
+            # Remove the {steps} part from the base path
             base_path=${base_path/\{*\}/}
             
             # Expand and transfer each step
