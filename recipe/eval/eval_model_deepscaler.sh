@@ -6,8 +6,8 @@ export NCCL_P2P_DISABLE=1
 # Default values
 MODEL_PATH="$HOME/DeepScaleR-1.5B-Preview"
 # Possible values: aime, amc, math, minerva, olympiad_bench
-DATATYPES=("aime, amc, math, minerva, olympiad_bench")
-OUTPUT_DIR="$HOME"  # Add default output directory
+DATATYPES=("aime")
+OUTPUT_DIR="$MODEL_PATH/eval_results/"  # Add default output directory
 
 # Parse named arguments
 while [[ $# -gt 0 ]]; do
@@ -41,18 +41,34 @@ echo "Model Path: ${MODEL_PATH}"
 echo "Datasets: ${DATATYPES[@]}"
 echo "Output Directory: ${OUTPUT_DIR}"
 
+# 如果 ${MODEL_PATH}_hf 已存在且包含 .safetensors，优先使用；否则若原始 MODEL_PATH 不含 .safetensors，则合并生成 hf 目录
+if [[ -d "${MODEL_PATH}_hf" && $(ls "${MODEL_PATH}_hf"/*.safetensors 2>/dev/null | wc -l) -gt 0 ]]; then
+    echo "Found .safetensors in ${MODEL_PATH}_hf, use it directly"
+    MODEL_PATH="${MODEL_PATH}_hf"
+elif ! ls "${MODEL_PATH}"/*.safetensors &>/dev/null; then
+    echo "No .safetensors found in ${MODEL_PATH}, merging to hf…"
+    python scripts/model_merger.py merge \
+        --backend fsdp \
+        --local_dir "${MODEL_PATH}" \
+        --target_dir "${MODEL_PATH}_hf"
+    MODEL_PATH="${MODEL_PATH}_hf"
+    echo "Switched MODEL_PATH to ${MODEL_PATH}"
+fi
+
 # Loop through all datatypes
 for DATA_TYPE in "${DATATYPES[@]}"; do
     python3 -m recipe.eval.main_eval \
         trainer.nnodes=1 \
-        trainer.n_gpus_per_node=8 \
+        trainer.n_gpus_per_node=4 \
         data.path=$HOME/verl/data/deepscaler/${DATA_TYPE}.parquet \
         data.output_path=${OUTPUT_DIR}/${DATA_TYPE}.parquet \
         data.n_samples=16 \
         data.batch_size=512 \
         model.path=${MODEL_PATH} \
         rollout.temperature=0.6 \
+        rollout.prompt_length=1024 \
         rollout.response_length=8192 \
+        rollout.max_num_batched_tokens=$((1024+8192)) \
         rollout.top_k=-1 \
         rollout.top_p=0.95 \
         rollout.gpu_memory_utilization=0.9 \
