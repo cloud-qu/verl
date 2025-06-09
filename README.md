@@ -1,3 +1,30 @@
+
+
+
+scp -i ~/.ssh/id_ed25519  -P 8092 -r temp_ckpts/ckpts/math/verl-1.5b-math-topk/global_step_290 quy@182.18.90.106:/data2/quy/verl/ckpts/
+
+
+ bash miniconda.sh -b -u -p ./miniconda3
+ source ./miniconda3/bin/activate
+ conda init --all
+ pip install hydra-core 
+
+
+enroot import docker://nvcr.io/nvidia/pytorch:24.10-py3
+enroot create --name verlraw nvidia+pytorch+24.10-py3.sqsh
+enroot start --rw    --mount /dss/mcmlscratch/0E/di35zis/lab/verl:/workspace/verl --mount /dss/dsshome1/0E/di35zis/.cache:/dss/dsshome1/0E/di35zis/.cache    verlraw
+
+enroot export verlraw > verl-container.sqsh
+enroot create --name verl verl-container.sqsh
+
+
+python -m venv myvenv
+cd myvenv
+source bin/activate
+enroot start 
+
+
+
 <div align="center">
  👋 Hi, everyone! 
     <br>
