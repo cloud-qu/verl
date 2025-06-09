@@ -97,8 +97,8 @@ def our_group_reward(batch, acc, task_sampler, batch_dict, metrics, sampled_acqu
         uid_mask = uids == uid
         # uid_rewards = reward_tensor[uid_mask].sum(-1)  # Sum rewards for each sequence (n_rollouts,)
         uid_rewards = torch.tensor(acc)[uid_mask]
-        uid_rewards = (uid_rewards >= 1).int()
         uid_reward_list.append(uid_rewards.sum()/len(uid_rewards)) # avg accuracy for a query
+        uid_rewards = (uid_rewards >= 1).int()
         
         # Check if all rewards are 0 or all are 1 for this uid, i.e., for the question, no/all responses are correct
         if (uid_rewards.sum()/len(uid_rewards) == 0):
@@ -177,17 +177,15 @@ class OurRayPPOTrainer(RayPPOTrainer):
             if self.config.tasksampler.framework == 4:
                 self.task_sampler = PosteriorSampler(args=self.config, total_num_samples=40315, init=self.config.tasksampler.bandit_init, init_dir=self.config.tasksampler.bandit_init_dir)
                 self.config.trainer.total_epochs = int(self.config.tasksampler.ts_ratio*self.config.trainer.total_epochs)
+                self.task_sampler.load(self.config.trainer.default_local_dir)
                 if self.config.tasksampler.bandit_load_dir != '':
                     self.task_sampler.load(self.config.tasksampler.bandit_load_dir)
             elif self.config.tasksampler.framework == 5:#srpo
                 self.task_sampler = HistorySampler(total_num_samples=40315)
                 self.config.tasksampler.ts_ratio = 1
-                self.task_sampler.load(self.config.actor_rollout_ref.model.path)
-            elif self.config.tasksampler.framework == 6: #dapo
-                self.candidate_task_batch = None
-                self.config.trainer.rejection_sample = False
-                self.config.trainer.rejection_sample_multiplier = 1
-                self.config.tasksampler.ts_ratio = 1
+                self.task_sampler.load(self.config.trainer.default_local_dir)
+                if self.config.tasksampler.bandit_load_dir != '':
+                    self.task_sampler.load(self.config.tasksampler.bandit_load_dir)
         ############################
         self._create_dataloader(train_dataset, val_dataset, collate_fn, train_sampler)
 
@@ -440,9 +438,14 @@ class OurRayPPOTrainer(RayPPOTrainer):
                             new_batch.non_tensor_batch.update({k: np.array(v) for k, v in reward_extra_infos_dict.items()})
                         
                         ##############
+                        if self.config.tasksampler.bandit_metric == 'acc':
+                            acc = torch.tensor(reward_extra_infos_dict['acc'] if 'acc' in reward_extra_infos_dict.keys() else reward_tensor)
+                            acc = (acc >= 1).int()  # convert to binary accuracy
+                        else:
+                            acc = torch.tensor(reward_tensor)
                         metrics = our_group_reward(
                             batch=new_batch,
-                            acc=reward_extra_infos_dict['acc'] if 'acc' in reward_extra_infos_dict.keys() else reward_tensor,
+                            acc=acc,
                             task_sampler=self.task_sampler,
                             batch_dict=batch_dict,
                             metrics=metrics,
@@ -477,7 +480,10 @@ class OurRayPPOTrainer(RayPPOTrainer):
                         for prompt_uid, metric_vals in prompt_uid2metric_vals.items():
                             prompt_uid2metric_std[prompt_uid] = np.std(metric_vals)
 
-                        kept_prompt_uids = [uid for uid, std in prompt_uid2metric_std.items() if std > 0 or len(prompt_uid2metric_vals[uid]) == 1]
+                        if self.config.algorithm.filter_groups.filter_min == 0 and self.config.algorithm.filter_groups.filter_max == 1:
+                            kept_prompt_uids = [uid for uid, std in prompt_uid2metric_std.items() if std > 0 or len(prompt_uid2metric_vals[uid]) == 1]
+                        else:
+                            kept_prompt_uids = [uid for uid, val in prompt_uid2metric_vals.items() if self.config.algorithm.filter_groups.filter_min <= np.mean(val) <= self.config.algorithm.filter_groups.filter_max]
                         num_prompt_in_batch += len(kept_prompt_uids)
 
                         kept_traj_idxs = []

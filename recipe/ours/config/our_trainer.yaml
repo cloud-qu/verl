@@ -23,6 +23,8 @@ algorithm:
     enable: False # We try to avoid forgetting to set enable
     metric: null # acc / score / seq_reward / seq_final_reward / ...
     max_num_gen_batches: 0 # Non-positive values mean no upper limit
+    filter_min: 0.0
+    filter_max: 1.0
 
 trainer:
   project_name: verl-our
@@ -41,6 +43,7 @@ tasksampler:
   rejection_sampling_ratio: 0.0  #0.0 means no rejection sampling; 1.0 means only top B samples are kept
   save_data: False
   bandit_sample_strategy: "threshold" #threshold/topk/softmax
+  bandit_metric: "acc" #acc/score
   bandit_target_mean: 0.5
   bandit_target_std: 0.0
   bandit_lower_bound: 0.3

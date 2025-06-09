@@ -140,7 +140,9 @@ class PosteriorSampler:
             if index not in self.beta.keys():
                 self.beta[index] = self.prior_beta
             local_beta.append(self.beta[index])
-        sampled_r = np.random.beta(np.array(local_alpha), np.array(local_beta))
+        local_alpha = np.array(local_alpha)
+        local_beta = np.array(local_beta)
+        sampled_r = np.random.beta(local_alpha, local_beta)
 
         # Step 3: 计算 softmax 权重（越接近 mu_t 权重越大）
         if self.sampling_strategy == 'uniform':
@@ -154,6 +156,10 @@ class PosteriorSampler:
         elif self.sampling_strategy == 'topk':
             distances = (sampled_r - target_mu) ** 2
             sampled_index = np.argsort(distances)[:self.real_batch_size]
+        elif self.sampling_strategy == 'topkstd':
+            #beta dist std
+            stds = np.sqrt((local_alpha * local_beta) / ((local_alpha + local_beta) ** 2 * (local_alpha + local_beta + 1)))
+            sampled_index = np.argsort(-stds)[:self.real_batch_size]
         elif self.sampling_strategy == 'threshold':
             in_range_mask = (sampled_r >= self.lower_bound) & (sampled_r <= self.upper_bound)
             in_range_indices = np.where(in_range_mask)[0]
@@ -192,8 +198,8 @@ class PosteriorSampler:
         indices = batch_candidates_dict['index']
         for idx, s in zip(indices, y):
             idx = str(idx)
-            self.alpha[idx] = max(self.alpha[idx]*self.decay_ratio + s * self.args.actor_rollout_ref.rollout.n, 1)
-            self.beta[idx] = max(self.beta[idx]*self.decay_ratio + (1 - s)  * self.args.actor_rollout_ref.rollout.n, 1)
+            self.alpha[idx] = self.alpha[idx]*self.decay_ratio + self.prior_alpha * (1-self.decay_ratio) + s * self.args.actor_rollout_ref.rollout.n
+            self.beta[idx] = self.beta[idx]*self.decay_ratio + self.prior_beta * (1-self.decay_ratio) + (1 - s)  * self.args.actor_rollout_ref.rollout.n
         return None, None, None
     
     
