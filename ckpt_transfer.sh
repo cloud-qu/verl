@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Source server details
-SOURCE_SERVER="di35zis@mcml"
+SOURCE_SERVER="di35zis@login.ai.lrz.de"
 SOURCE_BASE="/dss/dsshome1/0E/di35zis/lab/verl"
 
 # Target machine details
