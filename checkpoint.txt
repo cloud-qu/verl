@@ -12,4 +12,3 @@ ckpts/math/verl-1.5b-math-ps/global_step_260
 ckpts/math/verl-1.5b-math-ps/global_step_390
 ckpts/math/verl-1.5b-math-ps-noinit/global_step_300
 ckpts/math/verl-1.5b-math-ps-noinit/global_step_520
-
