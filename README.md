@@ -12,15 +12,14 @@ scp -i ~/.ssh/id_ed25519  -P 8092 -r temp_ckpts/ckpts/math/verl-1.5b-math-topk/g
 
 enroot import docker://nvcr.io/nvidia/pytorch:24.10-py3
 enroot create --name verlraw nvidia+pytorch+24.10-py3.sqsh
-enroot start --rw    --mount /dss/mcmlscratch/0E/di35zis/lab/verl:/workspace/verl --mount /dss/dsshome1/0E/di35zis/.cache:/dss/dsshome1/0E/di35zis/.cache    verlraw
+enroot create --name verlraw2 verlraw.sqsh
+enroot start --rw    --mount /dss/mcmlscratch/0E/di35zis/lab/verl:/workspace/verl --mount /dss/dsshome1/0E/di35zis/.cache:/dss/dsshome1/0E/di35zis/.cache    verlraw2
+echo "NVIDIA_DRIVER_CAPABILITIES=compute,utility,video" >> /etc/environment
+echo "NVIDIA_REQUIRE_CUDA=cuda>=9.0" >> /etc/environment
+echo "NVIDIA_VISIBLE_DEVICES=all" >> /etc/environment
+enroot export --output verlraw2.sqsh verlraw2
 
-enroot export verlraw > verl-container.sqsh
-enroot create --name verl verl-container.sqsh
 
-python -m venv myvenv
-cd myvenv
-source bin/activate
-enroot start 
 
 
 

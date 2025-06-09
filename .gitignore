@@ -142,3 +142,4 @@ flashinfer_python-0.2.2.post1+cu124torch2.6-cp38-abi3-linux_x86_64.whl.5
 nvidia+pytorch+24.10-py3.sqsh
 temp_ckpts/
 *.sqsh
+.config/

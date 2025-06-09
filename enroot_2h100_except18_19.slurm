@@ -36,7 +36,7 @@ echo "Head Node IP with port: $ip_head"
 
 # 启动 Head 节点上的 Ray
 echo "Starting HEAD node: $head_node"
-srun --nodes=1 --ntasks=1 --container-image=/dss/mcmlscratch/0E/di35zis/lab/verl/verlraw.sqsh --container-mounts=/dss/mcmlscratch/0E/di35zis/lab/verl:/workspace/verl --container-mounts=/dss/dsshome1/0E/di35zis/.cache:/dss/dsshome1/0E/di35zis/.cache -w "$head_node" \
+srun --nodes=1 --ntasks=1 --container-image=/dss/mcmlscratch/0E/di35zis/lab/verl/verlraw2.sqsh --container-mounts=/dss/mcmlscratch/0E/di35zis/lab/verl:/workspace/verl  -w "$head_node" \
     ray start --head --node-ip-address="$head_node" --port=$port \
     --num-cpus=$SLURM_CPUS_PER_TASK --num-gpus=$SLURM_GPUS_PER_NODE --block &
 
@@ -48,7 +48,7 @@ worker_num=$((SLURM_JOB_NUM_NODES - 1))
 for ((i = 1; i <= worker_num; i++)); do
     node_i=${nodes_array[$i]}
     echo "Starting WORKER $i at $node_i"
-    srun --nodes=1 --ntasks=1  --container-mounts=/dss/mcmlscratch/0E/di35zis/lab/verl:/workspace/verl --container-mounts=/dss/dsshome1/0E/di35zis/.cache:/dss/dsshome1/0E/di35zis/.cache --container-image=/dss/mcmlscratch/0E/di35zis/lab/verl/verlraw.sqsh -w "$node_i" \
+    srun --nodes=1 --ntasks=1  --container-mounts=/dss/mcmlscratch/0E/di35zis/lab/verl:/workspace/verl  --container-image=/dss/mcmlscratch/0E/di35zis/lab/verl/verlraw2.sqsh -w "$node_i" \
             ray start --address "$ip_head" --num-cpus "${SLURM_CPUS_PER_TASK}" --num-gpus "${SLURM_GPUS_PER_NODE}" --block &
     sleep 5
 done
@@ -74,8 +74,12 @@ fi
 
 MODEL_PATH=$(readlink -f "$MODEL_PATH")
 
+
+
+
 # 启动训练（仍然在 Head 节点）
-PYTHONUNBUFFERED=1 srun --overlap --nodes=1 --ntasks=1 --container-image=/dss/dsshome1/0E/di35zis/lab/verl/verlraw.sqsh    --container-mounts=/dss/dsshome1/0E/di35zis/.cache:/dss/dsshome1/0E/di35zis/.cache --container-mounts=/dss/dsshome1/0E/di35zis/lab/verl:/workspace/verl -w "$head_node" \
-    python /workspace/verl/train_wrapper.py
+PYTHONUNBUFFERED=1 srun --overlap --nodes=1 --ntasks=1 --container-image=/dss/dsshome1/0E/di35zis/lab/verl/verlraw2.sqsh   --container-mounts=/dss/dsshome1/0E/di35zis/lab/verl:/workspace/verl -w "$head_node" \
+bash -c "mkdir -p /workspace/verl/.cache/huggingface  && mkdir -p /workspace/verl/.cache/flashinfer && cd /workspace/verl &&  export HF_HOME=/workspace/verl/.cache/huggingface &&              export TRANSFORMERS_CACHE=/workspace/verl/.cache/huggingface &&              export HF_DATASETS_CACHE=/workspace/verl/.cache/huggingface &&              export FLASHINFER_WORKSPACE_DIR=/workspace/verl/.cache/flashinfer &&   python train_wrapper.py"
+    
 
 

@@ -2327,6 +2327,7 @@ def main_wrapper_math_7b_dapo(is_debug=False):
     project_name = 'math'
     exp_name = 'verl-7b-math-dapo'
     WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
+    print(f"WORKING_DIR: {WORKING_DIR}")
     RAY_DATA_HOME = f"{WORKING_DIR}"
     MODEL_PATH = f"{RAY_DATA_HOME}/models/DeepSeek-R1-Distill-Qwen-7B"
     if not os.path.exists(MODEL_PATH):
@@ -2450,7 +2451,7 @@ def main_wrapper_math_7b_dapo(is_debug=False):
                 "trainer.save_freq=5",
                 "trainer.total_epochs=100",
                 f"trainer.default_local_dir={CKPTS_DIR}",
-                "trainer.resume_mode=disable",
+                "trainer.resume_mode=auto",
                 "tasksampler.ts_ratio=1",
                 "tasksampler.framework=0",
             ],
@@ -2490,15 +2491,15 @@ if __name__ == "__main__":
         main_wrapper_math_topk_noinit() 
     elif slurm_job_id == "5170331":
         main_wrapper_math_ps_noinit() 
-    elif slurm_job_id == "5173220":
+    elif slurm_job_id == "5175950":
         main_wrapper_math_dapo()
-    elif slurm_job_id == "5173221":
+    elif slurm_job_id == "5175914xxx":
         main_wrapper_math_dapo_thres()
-    elif slurm_job_id == "5173963":
+    elif slurm_job_id == "5175915":
         main_wrapper_math_7b_uniform()
-    elif slurm_job_id == "5173964":
+    elif slurm_job_id == "5175916":
         main_wrapper_math_7b_topk_noinit()
-    elif slurm_job_id == "5174310":
+    elif slurm_job_id == "5175917":
         main_wrapper_math_7b_dapo()
     else:
         raise ValueError(f"Invalid slurm job id: {slurm_job_id}")
