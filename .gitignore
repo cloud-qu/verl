@@ -135,3 +135,8 @@ data/countdown*
 *.whl
 flash_attn-2.7.4.post1+cu12torch2.6cxx11abiFALSE-cp310-cp310-linux_x86_64.whl.3
 flashinfer_python-0.2.2.post1+cu124torch2.6-cp38-abi3-linux_x86_64.whl.3
+python-envs/
+*.whl.4
+flash_attn-2.7.4.post1+cu12torch2.6cxx11abiFALSE-cp310-cp310-linux_x86_64.whl.5
+flashinfer_python-0.2.2.post1+cu124torch2.6-cp38-abi3-linux_x86_64.whl.5
+nvidia+pytorch+24.10-py3.sqsh

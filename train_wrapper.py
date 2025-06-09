@@ -1004,7 +1004,7 @@ def main_wrapper_math_uniform(is_debug=False):
     from recipe.ours.main_our_remote import main
     if is_debug:
         nnodes = 1
-        n_gpus_per_node=4
+        n_gpus_per_node=1
     else:
         nnodes = 2
         n_gpus_per_node=4
@@ -2464,7 +2464,7 @@ if __name__ == "__main__":
     print(f"slurm_job_id: {slurm_job_id}")
     slurm_job_id = str(slurm_job_id)
 
-    #main_wrapper_math_uniform(is_debug=True)
+    main_wrapper_math_uniform(is_debug=True)
     if slurm_job_id == "5163046":
         main_wrapper_deepscaler_uniform()
     elif slurm_job_id == "5163047":
