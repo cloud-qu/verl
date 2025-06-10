@@ -2466,7 +2466,6 @@ if __name__ == "__main__":
     print(f"slurm_job_id: {slurm_job_id}")
     slurm_job_id = str(slurm_job_id)
 
-    main_wrapper_math_7b_dapo(is_debug=True)
     if slurm_job_id == "5163046":
         main_wrapper_deepscaler_uniform()
     elif slurm_job_id == "5163047":
@@ -2498,7 +2497,7 @@ if __name__ == "__main__":
         main_wrapper_math_dapo_thres()
     elif slurm_job_id == "5175915":
         main_wrapper_math_7b_uniform()
-    elif slurm_job_id == "5175916":
+    elif slurm_job_id == "5176608":
         main_wrapper_math_7b_topk_noinit()
     elif slurm_job_id == "5175917":
         main_wrapper_math_7b_dapo()
