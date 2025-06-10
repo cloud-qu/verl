@@ -228,7 +228,7 @@ class PosteriorSampler:
         import os
         data = {}
         for index in self.alpha.keys():
-            data[index] = [int(self.alpha[index]), int(self.beta[index])]
+            data[index] = [self.alpha[index], self.beta[index]]
         with open(os.path.join(save_path, 'index_score.json'), 'w') as f:
             json.dump(data, f)
 

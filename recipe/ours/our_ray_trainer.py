@@ -47,6 +47,7 @@ from verl import DataProto
 from verl.trainer.ppo.ray_trainer import (AdvantageEstimator, RayPPOTrainer,
                                           ResourcePoolManager, Role, _timer,
                                           apply_kl_penalty, compute_advantage)
+from verl.utils.checkpoint.checkpoint_manager import find_latest_ckpt_path
 
 
 def create_rl_dataset(data_paths, data_config, tokenizer, processor):
@@ -298,6 +299,64 @@ class OurRayPPOTrainer(RayPPOTrainer):
 
         if self.task_sampler is not None:
             self.task_sampler.save(actor_local_path)
+    
+    def _load_checkpoint(self):
+        if self.config.trainer.resume_mode == "disable":
+            return 0
+
+        # load from hdfs
+        if self.config.trainer.default_hdfs_dir is not None:
+            raise NotImplementedError("load from hdfs is not implemented yet")
+        else:
+            checkpoint_folder = self.config.trainer.default_local_dir  # TODO: check path
+            if not os.path.isabs(checkpoint_folder):
+                working_dir = os.getcwd()
+                checkpoint_folder = os.path.join(working_dir, checkpoint_folder)
+            global_step_folder = find_latest_ckpt_path(checkpoint_folder)  # None if no latest
+
+        # find global_step_folder
+        if self.config.trainer.resume_mode == "auto":
+            if global_step_folder is None:
+                print("Training from scratch")
+                return 0
+        else:
+            if self.config.trainer.resume_mode == "resume_path":
+                assert isinstance(self.config.trainer.resume_from_path, str), "resume ckpt must be str type"
+                assert "global_step_" in self.config.trainer.resume_from_path, "resume ckpt must specify the global_steps"
+                global_step_folder = self.config.trainer.resume_from_path
+                if not os.path.isabs(global_step_folder):
+                    working_dir = os.getcwd()
+                    global_step_folder = os.path.join(working_dir, global_step_folder)
+        print(f"Load from checkpoint folder: {global_step_folder}")
+        # set global step
+        self.global_steps = int(global_step_folder.split("global_step_")[-1])
+
+        print(f"Setting global step to {self.global_steps}")
+        print(f"Resuming from {global_step_folder}")
+
+        actor_path = os.path.join(global_step_folder, "actor")
+        critic_path = os.path.join(global_step_folder, "critic")
+        # load actor
+        self.actor_rollout_wg.load_checkpoint(actor_path, del_local_after_load=self.config.trainer.del_local_ckpt_after_load)
+        # load critic
+        if self.use_critic:
+            self.critic_wg.load_checkpoint(critic_path, del_local_after_load=self.config.trainer.del_local_ckpt_after_load)
+
+        # load dataloader,
+        # TODO: from remote not implemented yet
+        dataloader_local_path = os.path.join(global_step_folder, "data.pt")
+        if os.path.exists(dataloader_local_path):
+            dataloader_state_dict = torch.load(dataloader_local_path, weights_only=False)
+            self.train_dataloader.load_state_dict(dataloader_state_dict)
+        else:
+            print(f"Warning: No dataloader state found at {dataloader_local_path}, will start from scratch")
+
+        if self.config.tasksampler.framework == 4 or self.config.tasksampler.framework == 5:
+            # load task sampler
+            if self.task_sampler is not None:
+                self.task_sampler.load(actor_path)
+            else:
+                print("Warning: Task sampler is not initialized, skipping loading task sampler")
 
     def fit(self):
         """
