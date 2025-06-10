@@ -6,7 +6,7 @@ export NCCL_P2P_DISABLE=1
 # Default values
 MODEL_PATH="$HOME/DeepScaleR-1.5B-Preview"
 # Possible values: aime, amc, math, minerva, olympiad_bench
-DATATYPES=("aime")
+DATATYPES=("aime", "amc", "math", "minerva")
 OUTPUT_DIR="$MODEL_PATH/eval_results/"  # Add default output directory
 
 # Parse named arguments
@@ -66,9 +66,9 @@ for DATA_TYPE in "${DATATYPES[@]}"; do
         data.batch_size=512 \
         model.path=${MODEL_PATH} \
         rollout.temperature=0.6 \
-        rollout.prompt_length=1024 \
-        rollout.response_length=8192 \
-        rollout.max_num_batched_tokens=$((1024+8192)) \
+        rollout.prompt_length=2048 \
+        rollout.response_length=32768 \
+        rollout.max_num_batched_tokens=$((2048+32768)) \
         rollout.top_k=-1 \
         rollout.top_p=0.95 \
         rollout.gpu_memory_utilization=0.9 \
