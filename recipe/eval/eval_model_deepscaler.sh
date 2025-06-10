@@ -1,6 +1,6 @@
 set -x
 
-export VLLM_ATTENTION_BACKEND=XFORMERS
+# export VLLM_ATTENTION_BACKEND=XFORMERS
 # export NCCL_P2P_DISABLE=1
 
 # Default values
