@@ -86,12 +86,12 @@ python3 -m recipe.ours.main_our \
     critic.model.enable_gradient_checkpointing=True \
     critic.model.fsdp_config.param_offload=${offload} \
     critic.model.fsdp_config.optimizer_offload=${offload} \
-    critic.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
+    critic.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*6)) \
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.actor.use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.ref.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.rollout.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
-    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
+    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*6)) \
     actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
     actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
     actor_rollout_ref.model.path="${MODEL_PATH}" \
