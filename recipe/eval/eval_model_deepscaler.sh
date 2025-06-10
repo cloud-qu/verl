@@ -63,7 +63,7 @@ experiment_name=${parts[$((len-3))]}/${parts[$((len-2))]}
 
 # # Loop through all datatypes
 for DATA_TYPE in "${DATATYPES[@]}"; do
-    python3 -m recipe.eval.main_eval \
+    python3 -m recipe.eval.main_eval_remote \
         trainer.nnodes=1 \
         trainer.n_gpus_per_node=4 \
         data.path=$PWD/data/deepscaler/${DATA_TYPE}.parquet \
