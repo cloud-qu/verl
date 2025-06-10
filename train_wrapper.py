@@ -2320,7 +2320,7 @@ def main_wrapper_math_7b_dapo(is_debug=False):
     from recipe.ours.main_our_remote import main
     if is_debug:
         nnodes = 1
-        n_gpus_per_node=1
+        n_gpus_per_node=4
     else:
         nnodes = 2
         n_gpus_per_node=4
@@ -2463,8 +2463,14 @@ def main_wrapper_math_7b_dapo(is_debug=False):
 
 if __name__ == "__main__":
     slurm_job_id = os.environ.get("SLURM_JOB_ID")
+    debug = os.environ.get("DEBUG", "0")
     print(f"slurm_job_id: {slurm_job_id}")
     slurm_job_id = str(slurm_job_id)
+
+    if debug=="1":
+        print("debug mode")
+        main_wrapper_math_7b_dapo(is_debug=True)
+        exit()
 
     if slurm_job_id == "5163046":
         main_wrapper_deepscaler_uniform()
@@ -2501,5 +2507,6 @@ if __name__ == "__main__":
         main_wrapper_math_7b_topk_noinit()
     elif slurm_job_id == "5175917":
         main_wrapper_math_7b_dapo()
+    
     else:
         raise ValueError(f"Invalid slurm job id: {slurm_job_id}")
