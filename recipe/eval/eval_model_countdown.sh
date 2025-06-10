@@ -77,5 +77,7 @@ for DATA_TYPE in "${DATATYPES[@]}"; do
         rollout.top_k=-1 \
         rollout.top_p=0.95 \
         rollout.gpu_memory_utilization=0.9 \
-        rollout.tensor_model_parallel_size=1
+        rollout.tensor_model_parallel_size=1 \
+        wandb.project_name=${project_name} \
+        wandb.experiment_name=${experiment_name}/${DATA_TYPE}
 done

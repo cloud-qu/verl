@@ -80,5 +80,5 @@ for DATA_TYPE in "${DATATYPES[@]}"; do
         rollout.gpu_memory_utilization=0.9 \
         rollout.tensor_model_parallel_size=1 \
         wandb.project_name=${project_name} \
-        wandb.experiment_name=${experiment_name}/${DATA_TYPE} \
+        wandb.experiment_name=${experiment_name}/${DATA_TYPE}
 done
