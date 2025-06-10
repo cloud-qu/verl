@@ -66,7 +66,7 @@ for DATA_TYPE in "${DATATYPES[@]}"; do
     python3 -m recipe.eval.main_eval \
         trainer.nnodes=1 \
         trainer.n_gpus_per_node=4 \
-        data.path=$HOME/verl/data/deepscaler/${DATA_TYPE}.parquet \
+        data.path=$PWD/data/deepscaler/${DATA_TYPE}.parquet \
         data.output_path=${OUTPUT_DIR}/${DATA_TYPE}.parquet \
         data.n_samples=16 \
         data.batch_size=512 \
