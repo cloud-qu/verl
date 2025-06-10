@@ -6,7 +6,7 @@ set -x
 # Default values
 MODEL_PATH="$HOME/DeepScaleR-1.5B-Preview"
 # Possible values: aime, amc, math, minerva, olympiad_bench
-DATATYPES=("aime", "amc", "math", "minerva", "olympiad_bench")
+DATATYPES=("aime" "amc" "math" "minerva" "olympiad_bench")
 OUTPUT_DIR="$MODEL_PATH/eval_results/"  # Add default output directory
 
 # Parse named arguments
