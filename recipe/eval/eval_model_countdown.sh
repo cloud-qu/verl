@@ -7,7 +7,7 @@ export NCCL_P2P_DISABLE=1
 MODEL_PATH="$HOME/DeepScaleR-1.5B-Preview"
 # Possible values: aime, amc, math, minerva, olympiad_bench
 DATATYPES=("test")
-OUTPUT_DIR="$HOME"  # Add default output directory
+OUTPUT_DIR="$MODEL_PATH/eval_results/"  # Add default output directory
 
 # Parse named arguments
 while [[ $# -gt 0 ]]; do
@@ -41,6 +41,19 @@ echo "Model Path: ${MODEL_PATH}"
 echo "Datasets: ${DATATYPES[@]}"
 echo "Output Directory: ${OUTPUT_DIR}"
 
+# 如果 ${MODEL_PATH}_hf 已存在且包含 .safetensors，优先使用；否则若原始 MODEL_PATH 不含 .safetensors，则合并生成 hf 目录
+if [[ -d "${MODEL_PATH}_hf" && $(ls "${MODEL_PATH}_hf"/*.safetensors 2>/dev/null | wc -l) -gt 0 ]]; then
+    echo "Found .safetensors in ${MODEL_PATH}_hf, use it directly"
+    MODEL_PATH="${MODEL_PATH}_hf"
+elif ! ls "${MODEL_PATH}"/*.safetensors &>/dev/null; then
+    echo "No .safetensors found in ${MODEL_PATH}, merging to hf…"
+    python scripts/model_merger.py merge \
+        --backend fsdp \
+        --local_dir "${MODEL_PATH}" \
+        --target_dir "${MODEL_PATH}_hf"
+    MODEL_PATH="${MODEL_PATH}_hf"
+    echo "Switched MODEL_PATH to ${MODEL_PATH}"
+fi
 # Loop through all datatypes
 for DATA_TYPE in "${DATATYPES[@]}"; do
     python3 -m recipe.eval.main_eval \

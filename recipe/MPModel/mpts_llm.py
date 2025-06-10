@@ -228,7 +228,7 @@ class PosteriorSampler:
         import os
         data = {}
         for index in self.alpha.keys():
-            data[index] = [int(self.alpha[index]), int(self.beta[index])]
+            data[index] = [float(self.alpha[index]), float(self.beta[index])]
         with open(os.path.join(save_path, 'index_score.json'), 'w') as f:
             json.dump(data, f)
 
@@ -247,6 +247,7 @@ class PosteriorSampler:
                 idx = key
                 self.alpha[idx] = results[0]
                 self.beta[idx] = results[1]
+            print(f'Posterior Sampler load from {load_path}')
         except:
             pass
 
@@ -318,6 +319,7 @@ class HistorySampler:
             for key, score in data.items():
                 idx = key
                 self.scores[idx] = score
+            print(f'History Sampler load from {load_path}')
         except:
             pass
     

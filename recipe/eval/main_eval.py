@@ -79,9 +79,8 @@ def main(config):
         total_samples = len(dataset)
         # real_batch_size = data.batch['input_ids'].shape[0]
         config_batch_size = config.data.batch_size
-        dp_size = wg.world_size // config.rollout.tensor_model_parallel_size
-        num_batch = (total_samples // config_batch_size) + 1
-        output_lst = []  # We'll reshape at the end
+        num_batch = -(-total_samples // config_batch_size)
+        output_lst = [[] for _ in range(config.data.n_samples)]
 
         for batch_idx in range(num_batch):
             print(f'[{batch_idx+1}/{num_batch}] Start to process.')
@@ -93,7 +92,7 @@ def main(config):
                 repeated_chat_lst.extend([chat] * config.data.n_samples)
             
             inputs = tokenizer.apply_chat_template(
-                                                repeated_chat_lst,
+                                                batch_chat_lst,
                                                 add_generation_prompt=True,
                                                 padding=True,
                                                 truncation=True,
