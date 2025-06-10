@@ -29,6 +29,7 @@ os.environ['TOKENIZERS_PARALLELISM'] = 'true'
 import pandas as pd
 from transformers import AutoTokenizer
 
+import wandb
 from verl import DataProto
 from verl.protocol import pad_dataproto_to_divisor, unpad_dataproto
 from verl.single_controller.ray import (RayClassWithInitArgs, RayResourcePool,
@@ -43,6 +44,9 @@ from verl.workers.fsdp_workers import ActorRolloutRefWorker
 @hydra.main(config_path='config', config_name='generation', version_base=None)
 def main(config):
     from pprint import pprint
+    wandb.init(
+        project=config.wandb.project_name,
+        name=config.wandb.experiment_name,config=config)
 
     from omegaconf import OmegaConf
     pprint(OmegaConf.to_container(config, resolve=True))  # resolve=True will eval symbol values
@@ -183,6 +187,7 @@ def main(config):
         'pass@1': pass_at_1,
         f'pass@{n_samples}': pass_at_n
     }
+    wandb.log({'pass@1': pass_at_1, f'pass@{n_samples}': pass_at_n})
 
     # Check if file exists
     file_exists = os.path.isfile(csv_path)
@@ -199,6 +204,7 @@ def main(config):
     
     # Print table
     print(tabulate(table_data, headers=['Metric', 'Value'], tablefmt='grid'))
+    wandb.finish()
 
 # Add the select_reward_fn from main_eval.py
 def select_reward_fn(data_source):

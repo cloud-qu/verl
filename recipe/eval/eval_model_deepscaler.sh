@@ -1,12 +1,12 @@
 set -x
 
 export VLLM_ATTENTION_BACKEND=XFORMERS
-export NCCL_P2P_DISABLE=1
+# export NCCL_P2P_DISABLE=1
 
 # Default values
 MODEL_PATH="$HOME/DeepScaleR-1.5B-Preview"
 # Possible values: aime, amc, math, minerva, olympiad_bench
-DATATYPES=("aime", "amc", "math", "minerva")
+DATATYPES=("aime", "amc", "math", "minerva", "olympiad_bench")
 OUTPUT_DIR="$MODEL_PATH/eval_results/"  # Add default output directory
 
 # Parse named arguments
@@ -55,7 +55,13 @@ elif ! ls "${MODEL_PATH}"/*.safetensors &>/dev/null; then
     echo "Switched MODEL_PATH to ${MODEL_PATH}"
 fi
 
-# Loop through all datatypes
+project_name='math_eval'
+IFS='/' read -ra parts <<< "$MODEL_PATH"
+len=${#parts[@]}
+
+experiment_name=${parts[$((len-3))]}/${parts[$((len-2))]}
+
+# # Loop through all datatypes
 for DATA_TYPE in "${DATATYPES[@]}"; do
     python3 -m recipe.eval.main_eval \
         trainer.nnodes=1 \
@@ -72,5 +78,7 @@ for DATA_TYPE in "${DATATYPES[@]}"; do
         rollout.top_k=-1 \
         rollout.top_p=0.95 \
         rollout.gpu_memory_utilization=0.9 \
-        rollout.tensor_model_parallel_size=1
+        rollout.tensor_model_parallel_size=1 \
+        wandb.project_name=${project_name} \
+        wandb.experiment_name=${experiment_name}/${DATA_TYPE} \
 done
