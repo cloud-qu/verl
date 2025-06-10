@@ -44,11 +44,10 @@ from verl.workers.fsdp_workers import ActorRolloutRefWorker
 @hydra.main(config_path='config', config_name='generation', version_base=None)
 def main(config):
     from pprint import pprint
-    wandb.init(
-        project=config.wandb.project_name,
-        name=config.wandb.experiment_name,config=config)
 
     from omegaconf import OmegaConf
+    wandb.init(project=config.wandb.project_name,name=config.wandb.experiment_name,config=OmegaConf.to_container(config, resolve=True))
+
     pprint(OmegaConf.to_container(config, resolve=True))  # resolve=True will eval symbol values
     OmegaConf.resolve(config)
 
