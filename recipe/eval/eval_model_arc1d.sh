@@ -54,6 +54,14 @@ elif ! ls "${MODEL_PATH}"/*.safetensors &>/dev/null; then
     MODEL_PATH="${MODEL_PATH}_hf"
     echo "Switched MODEL_PATH to ${MODEL_PATH}"
 fi
+
+
+project_name='arc1d_eval'
+IFS='/' read -ra parts <<< "$MODEL_PATH"
+len=${#parts[@]}
+
+experiment_name=${parts[$((len-3))]}/${parts[$((len-2))]}
+
 # Loop through all datatypes
 for DATA_TYPE in "${DATATYPES[@]}"; do
     python3 -m recipe.eval.main_eval \
