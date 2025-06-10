@@ -87,6 +87,8 @@ python examples/data_preprocess/math_dataset.py --local_dir='data/math'
 # python examples/data_preprocess/countdown.py
 # python examples/data_preprocess/arc1d.py
 
+pip install tabulate
+
 # wandb
 pip install wandb
 # export WANDB_BASE_URL="http://182.18.90.106:8777"
