@@ -24,7 +24,7 @@ for TARGET_DIR in "${TARGET_DIRS[@]}"; do
         # 如果 step 是数字并小于 200，则删除
         if [[ "$step" =~ ^[0-9]+$ ]] && [ "$step" -lt 200 ]; then
             echo "Deleting $dir (step $step)"
-            # rm -rf "$dir"
+            rm -rf "$dir"
         fi
     done
 done
