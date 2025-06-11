@@ -134,8 +134,8 @@ python3 -m recipe.ours.main_our \
     trainer.n_gpus_per_node=8 \
     trainer.nnodes="${NNODES}" \
     trainer.val_before_train=False \
-    trainer.test_freq=5 \
-    trainer.save_freq=5 \
+    trainer.test_freq=10 \
+    trainer.save_freq=10 \
     trainer.total_epochs=200 \
     trainer.total_training_steps=120 \
     trainer.default_local_dir="${CKPTS_DIR}" \
