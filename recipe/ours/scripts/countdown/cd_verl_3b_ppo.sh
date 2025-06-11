@@ -91,7 +91,7 @@ python3 -m recipe.ours.main_our \
     actor_rollout_ref.actor.use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.ref.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.rollout.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
-    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*6)) \
+    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
     actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
     actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
     actor_rollout_ref.model.path="${MODEL_PATH}" \
@@ -134,8 +134,8 @@ python3 -m recipe.ours.main_our \
     trainer.n_gpus_per_node=8 \
     trainer.nnodes="${NNODES}" \
     trainer.val_before_train=False \
-    trainer.test_freq=5 \
-    trainer.save_freq=5 \
+    trainer.test_freq=10 \
+    trainer.save_freq=10 \
     trainer.total_epochs=200 \
     trainer.total_training_steps=120 \
     trainer.default_local_dir="${CKPTS_DIR}" \
