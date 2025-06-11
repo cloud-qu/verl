@@ -55,4 +55,5 @@ tasksampler:
   bandit_init: False
   bandit_init_dir: "/home/quyun/deepscaler/outputs/init_eval_train_1/index_score.json"
   bandit_load_dir: ""
+  bandit_no_update: False
 
