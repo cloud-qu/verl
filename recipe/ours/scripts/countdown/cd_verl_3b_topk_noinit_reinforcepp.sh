@@ -4,9 +4,9 @@ export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
 project_name='countdown'
-exp_name='verl-3b-countdown-topk-noinit-priordecay'
+exp_name='verl-3b-countdown-topk-noinit-reinforcepp'
 
-adv_estimator=grpo
+adv_estimator=reinforce_plus_plus
 
 use_kl_in_reward=False
 kl_coef=0.0
