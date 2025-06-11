@@ -113,6 +113,8 @@ class PosteriorSampler:
         self.upper_bound_decay_steps = args.tasksampler.bandit_upper_decay_steps
         self.upper_bound_decay_lower = args.tasksampler.bandit_upper_decay_lower
         self.sampling_strategy = args.tasksampler.bandit_sample_strategy
+        self.no_update = args.tasksampler.bandit_no_update
+        
         if init:
             self.initialize_from_json(init_dir)
 
@@ -195,6 +197,8 @@ class PosteriorSampler:
         :param indices: 被训练过的样本索引数组
         :param successes: 成功率数组（float ∈ [0,1]）
         """
+        if self.no_update:
+            return None, None, None
         indices = batch_candidates_dict['index']
         for idx, s in zip(indices, y):
             idx = str(idx)

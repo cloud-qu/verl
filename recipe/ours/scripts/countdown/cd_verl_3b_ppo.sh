@@ -4,9 +4,9 @@ export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
 project_name='countdown'
-exp_name='verl-3b-countdown-topk-noinit-priordecay'
+exp_name='verl-3b-countdown-ppo'
 
-adv_estimator=grpo
+adv_estimator=gae
 
 use_kl_in_reward=False
 kl_coef=0.0
@@ -80,11 +80,18 @@ python3 -m recipe.ours.main_our \
     algorithm.filter_groups.enable=${enable_filter_groups} \
     algorithm.filter_groups.metric=${filter_groups_metric} \
     algorithm.filter_groups.max_num_gen_batches=${max_num_gen_batches} \
+    critic.optim.lr=1e-5 \
+    critic.model.use_remove_padding=True \
+    critic.model.path="${MODEL_PATH}" \
+    critic.model.enable_gradient_checkpointing=True \
+    critic.model.fsdp_config.param_offload=${offload} \
+    critic.model.fsdp_config.optimizer_offload=${offload} \
+    critic.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*6)) \
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.actor.use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.ref.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.rollout.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
-    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
+    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*6)) \
     actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
     actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
     actor_rollout_ref.model.path="${MODEL_PATH}" \
@@ -133,13 +140,6 @@ python3 -m recipe.ours.main_our \
     trainer.total_training_steps=120 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
-    tasksampler.ts_ratio=8 \
-    tasksampler.framework=4 \
-    tasksampler.bandit_sample_strategy='topk'\
-    tasksampler.bandit_lower_bound=0.3\
-    tasksampler.bandit_upper_bound=0.7\
-    tasksampler.bandit_decay_ratio=0.5\
-    trainer.total_training_steps=120 \
-    tasksampler.bandit_init=False\
-    tasksampler.bandit_init_dir="${HOME}/verl/recipe/ours/scripts/math/index_score.json"\
+    tasksampler.ts_ratio=1 \
+    tasksampler.framework=0 \
     "${@:1}"

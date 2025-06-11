@@ -4,9 +4,9 @@ export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
 project_name='countdown'
-exp_name='verl-3b-countdown-topk-noinit-priordecay'
+exp_name='verl-3b-countdown-reinforcepp'
 
-adv_estimator=grpo
+adv_estimator=reinforce_plus_plus
 
 use_kl_in_reward=False
 kl_coef=0.0
@@ -133,13 +133,6 @@ python3 -m recipe.ours.main_our \
     trainer.total_training_steps=120 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
-    tasksampler.ts_ratio=8 \
-    tasksampler.framework=4 \
-    tasksampler.bandit_sample_strategy='topk'\
-    tasksampler.bandit_lower_bound=0.3\
-    tasksampler.bandit_upper_bound=0.7\
-    tasksampler.bandit_decay_ratio=0.5\
-    trainer.total_training_steps=120 \
-    tasksampler.bandit_init=False\
-    tasksampler.bandit_init_dir="${HOME}/verl/recipe/ours/scripts/math/index_score.json"\
+    tasksampler.ts_ratio=1 \
+    tasksampler.framework=0 \
     "${@:1}"
