@@ -6,8 +6,8 @@ export PS1=""
 #source "$(conda info --base)/etc/profile.d/conda.sh"
 #conda create -n verl python=3.10 -y
 conda activate verl
-# conda install nvidia/label/cuda-12.1.0::cuda-tools
-# conda install -c nvidia cuda-toolkit
+conda install nvidia/label/cuda-12.1.0::cuda-tools
+conda install -c nvidia cuda-toolkit
 
 USE_MEGATRON=0
 
@@ -76,13 +76,13 @@ cd ../..
 # download model
 pip install -U huggingface_hub
 #export HF_ENDPOINT=https://hf-mirror.com
-huggingface-cli download --resume-download deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B --local-dir models/DeepSeek-R1-Distill-Qwen-1.5B
+#huggingface-cli download --resume-download deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B --local-dir models/DeepSeek-R1-Distill-Qwen-1.5B
 # huggingface-cli download --resume-download deepseek-ai/DeepSeek-R1-Distill-Qwen-7B --local-dir models/DeepSeek-R1-Distill-Qwen-7B
 # huggingface-cli download --resume-download Qwen/Qwen2.5-3B --local-dir models/Qwen2.5-3B
 
 #prepare math
 # huggingface-cli download --repo-type dataset --resume-download DigitalLearningGmbH/MATH-lighteval --local-dir data/math/raw
-python examples/data_preprocess/math_dataset.py --local_dir='data/math'
+#python examples/data_preprocess/math_dataset.py --local_dir='data/math'
 # bash recipe/ours/scripts/math/generation_prior.sh #math train prior
 # python examples/data_preprocess/countdown.py
 # python examples/data_preprocess/arc1d.py
