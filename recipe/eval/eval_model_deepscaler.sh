@@ -69,7 +69,7 @@ for DATA_TYPE in "${DATATYPES[@]}"; do
         data.path=$PWD/data/deepscaler/${DATA_TYPE}.parquet \
         data.output_path=${OUTPUT_DIR}/${DATA_TYPE}.parquet \
         data.n_samples=16 \
-        data.batch_size=512 \
+        data.batch_size=1024 \
         model.path=${MODEL_PATH} \
         rollout.temperature=0.6 \
         rollout.prompt_length=2048 \
