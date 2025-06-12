@@ -1,5 +1,11 @@
 
 
+python scripts/model_merger.py merge \
+    --backend fsdp \
+    --local_dir ckpts/math/verl-1.5b-math-topk/global_step_290/actor \
+    --target_dir ckpts_send/verl-1.5b-math-topk_global_step_290_actor_merged
+
+
 
 scp -i ~/.ssh/id_ed25519  -P 8092 -r temp_ckpts/ckpts/math/verl-1.5b-math-topk/global_step_290 quy@182.18.90.106:/data2/quy/verl/ckpts/
 

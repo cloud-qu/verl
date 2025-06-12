@@ -149,7 +149,7 @@ def main_wrapper_deepscaler_topk(is_debug=False):
     from recipe.deepscaler.main_deepscaler_remote import main
     if is_debug:
         nnodes = 1
-        n_gpus_per_node=1
+        n_gpus_per_node=4
     else:
         nnodes = 2
         n_gpus_per_node=4
@@ -2767,7 +2767,7 @@ if __name__ == "__main__":
 
     if debug=="1":
         print("debug mode")
-        main_wrapper_math_7b_dapo(is_debug=True)
+        main_wrapper_deepscaler_topk(is_debug=True)
         exit()
 
     if slurm_job_id == "5163046":

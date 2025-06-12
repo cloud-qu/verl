@@ -24,14 +24,26 @@ from verl.utils.hdfs_io import copy, makedirs
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--local_dir", default="~/data/geo3k")
+    parser.add_argument("--local_dir", default="./data/geo3k")
     parser.add_argument("--hdfs_dir", default=None)
 
     args = parser.parse_args()
 
     data_source = "hiyouga/geometry3k"
 
-    dataset = datasets.load_dataset(data_source)
+    try:
+        dataset = datasets.load_dataset(data_source)
+    except:
+        local_data_source = f"{os.environ.get('HOME')}/verl/data/geo3k/raw/data"
+        if not os.path.exists(local_data_source):
+            os.system('pip install -U huggingface_hub; export HF_ENDPOINT=https://hf-mirror.com; huggingface-cli download --repo-type dataset --resume-download hiyouga/geometry3k --local-dir data/geo3k/raw')
+        if os.path.exists(local_data_source):
+            dataset = datasets.load_dataset('parquet', data_files={
+                "train": os.path.join(local_data_source, "train-00000-of-00001.parquet"),
+                "test": os.path.join(local_data_source, "test-00000-of-00001.parquet")
+            })
+        else:
+            dataset = datasets.load_dataset(data_source)
 
     train_dataset = dataset["train"]
     test_dataset = dataset["test"]
