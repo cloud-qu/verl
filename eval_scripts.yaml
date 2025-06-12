@@ -1,38 +1,26 @@
 
 
-bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk/global_step_290/actor --output-dir ckpts/math/verl-1.5b-math-topk/global_step_290/eval_results
-bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk/global_step_425/actor --output-dir ckpts/math/verl-1.5b-math-topk/global_step_425/eval_results
-bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk/global_step_455/actor --output-dir ckpts/math/verl-1.5b-math-topk/global_step_455/eval_results
+# bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk/global_step_290/actor --output-dir ckpts/math/verl-1.5b-math-topk/global_step_290/eval_results
+# bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk/global_step_425/actor --output-dir ckpts/math/verl-1.5b-math-topk/global_step_425/eval_results
+# bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk/global_step_455/actor --output-dir ckpts/math/verl-1.5b-math-topk/global_step_455/eval_results
 
 
 
 
 
-bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk-noinit/global_step_275/actor --output-dir ckpts/math/verl-1.5b-math-topk-noinit/global_step_275/eval_results
-bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk-noinit/global_step_330/actor --output-dir ckpts/math/verl-1.5b-math-topk-noinit/global_step_330/eval_results
-bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk-noinit/global_step_355/actor --output-dir ckpts/math/verl-1.5b-math-topk-noinit/global_step_355/eval_results
+# bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk-noinit/global_step_275/actor --output-dir ckpts/math/verl-1.5b-math-topk-noinit/global_step_275/eval_results
+# bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk-noinit/global_step_330/actor --output-dir ckpts/math/verl-1.5b-math-topk-noinit/global_step_330/eval_results
+# bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk-noinit/global_step_355/actor --output-dir ckpts/math/verl-1.5b-math-topk-noinit/global_step_355/eval_results
 
 
 
 
 
-bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk-noinit/global_step_435/actor --output-dir ckpts/math/verl-1.5b-math-topk-noinit/global_step_435/eval_results
-bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk-noinit/global_step_545/actor --output-dir ckpts/math/verl-1.5b-math-topk-noinit/global_step_545/eval_results
+# bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk-noinit/global_step_435/actor --output-dir ckpts/math/verl-1.5b-math-topk-noinit/global_step_435/eval_results
+# bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-topk-noinit/global_step_545/actor --output-dir ckpts/math/verl-1.5b-math-topk-noinit/global_step_545/eval_results
 
 
-bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math/global_step_160/actor --output-dir ckpts/math/verl-1.5b-math/global_step_160/eval_results
-
-
-
-
-
-
-
-bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math/global_step_275/actor --output-dir ckpts/math/verl-1.5b-math/global_step_275/eval_results
-
-
-bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-ps/global_step_260/actor --output-dir ckpts/math/verl-1.5b-math-ps/global_step_260/eval_results
-bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-ps/global_step_390/actor --output-dir ckpts/math/verl-1.5b-math-ps/global_step_390/eval_results
+# bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math/global_step_160/actor --output-dir ckpts/math/verl-1.5b-math/global_step_160/eval_results
 
 
 
@@ -40,6 +28,32 @@ bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-ps/g
 
 
 
+# bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math/global_step_275/actor --output-dir ckpts/math/verl-1.5b-math/global_step_275/eval_results
 
-bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-ps-noinit/global_step_300/actor --output-dir ckpts/math/verl-1.5b-math-ps-noinit/global_step_300/eval_results
-bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-ps-noinit/global_step_520/actor --output-dir ckpts/math/verl-1.5b-math-ps-noinit/global_step_520/eval_results
+
+# bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-ps/global_step_260/actor --output-dir ckpts/math/verl-1.5b-math-ps/global_step_260/eval_results
+# bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-ps/global_step_390/actor --output-dir ckpts/math/verl-1.5b-math-ps/global_step_390/eval_results
+
+
+
+
+
+
+
+
+# bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-ps-noinit/global_step_300/actor --output-dir ckpts/math/verl-1.5b-math-ps-noinit/global_step_300/eval_results
+# bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-ps-noinit/global_step_520/actor --output-dir ckpts/math/verl-1.5b-math-ps-noinit/global_step_520/eval_results
+
+
+bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-dapo/global_step_200/actor --output-dir ckpts/math/verl-1.5b-math-dapo/global_step_200/eval_results
+bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-dapo/global_step_215/actor --output-dir ckpts/math/verl-1.5b-math-dapo/global_step_215/eval_results
+bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-dapo/global_step_310/actor --output-dir ckpts/math/verl-1.5b-math-dapo/global_step_310/eval_results
+bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-dapo-thres/global_step_360/actor --output-dir ckpts/math/verl-1.5b-math-dapo/global_step_360/eval_results
+bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-1.5b-math-dapo-thres/global_step_290/actor --output-dir ckpts/math/verl-1.5b-math-dapo/global_step_290/eval_results
+bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-7b-math/global_step_55/actor --output-dir ckpts/math/verl-7b-math/global_step_55/eval_results
+bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-7b-math/global_step_70/actor --output-dir ckpts/math/verl-7b-math/global_step_70/eval_results
+bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-7b-math-topk-noinit/global_step_95/actor --output-dir ckpts/math/verl-7b-math-topk-noinit/global_step_95/eval_results
+bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-7b-math-topk-noinit/global_step_130/actor --output-dir ckpts/math/verl-7b-math-topk-noinit/global_step_130/eval_results
+bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-7b-math-dapo/global_step_110/actor --output-dir ckpts/math/verl-7b-math-dapo/global_step_110/eval_results
+bash recipe/eval/eval_model_deepscaler.sh --model ckpts/math/verl-7b-math-dapo/global_step_165/actor --output-dir ckpts/math/verl-7b-math-dapo/global_step_165/eval_results
+bash recipe/eval/eval_model_deepscaler.sh --model models/DeepSeek-R1-Distill-Qwen-7B --output-dir models/DeepSeek-R1-Distill-Qwen-7B/eval_results
