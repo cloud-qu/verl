@@ -1,12 +1,12 @@
 set -x
 
-export VLLM_ATTENTION_BACKEND=XFORMERS
-export NCCL_P2P_DISABLE=1
+# export VLLM_ATTENTION_BACKEND=XFORMERS
+# export NCCL_P2P_DISABLE=1
 
 # Default values
 MODEL_PATH="$HOME/DeepScaleR-1.5B-Preview"
 # Possible values: aime, amc, math, minerva, olympiad_bench
-DATATYPES=("test")
+DATATYPES=("countdown3to4" "countdown4")
 OUTPUT_DIR="$MODEL_PATH/eval_results/"  # Add default output directory
 
 # Parse named arguments
@@ -64,16 +64,18 @@ experiment_name=${parts[$((len-3))]}/${parts[$((len-2))]}
 
 # Loop through all datatypes
 for DATA_TYPE in "${DATATYPES[@]}"; do
-    python3 -m recipe.eval.main_eval \
+    python3 -m recipe.eval.main_eval_remote \
         trainer.nnodes=1 \
         trainer.n_gpus_per_node=8 \
-        data.path=$HOME/verl/data/countdown3to4/${DATA_TYPE}.parquet \
+        data.path=$PWD/data/${DATA_TYPE}/test.parquet \
         data.output_path=${OUTPUT_DIR}/${DATA_TYPE}.parquet \
         data.n_samples=16 \
-        data.batch_size=512 \
+        data.batch_size=1024 \
         model.path=${MODEL_PATH} \
         rollout.temperature=0.6 \
-        rollout.response_length=8192 \
+        rollout.prompt_length=512 \
+        rollout.response_length=2048 \
+        rollout.max_num_batched_tokens=$((2048+512)) \
         rollout.top_k=-1 \
         rollout.top_p=0.95 \
         rollout.gpu_memory_utilization=0.9 \
