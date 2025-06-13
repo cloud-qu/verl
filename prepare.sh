@@ -87,6 +87,7 @@ python examples/data_preprocess/math_dataset.py --local_dir='data/math'
 # bash recipe/ours/scripts/math/generation_prior.sh #math train prior
 # python examples/data_preprocess/countdown.py
 # python examples/data_preprocess/arc1d.py
+# python examples/data_preprocess/geo3k.py
 
 pip install tabulate
 

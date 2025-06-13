@@ -4,7 +4,7 @@ export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
 project_name='geo3k'
-exp_name='verl-3b-geo3k-topk-noinit'
+exp_name='verl-3b-geo3k-dapo'
 
 adv_estimator=grpo
 
@@ -24,8 +24,8 @@ overlong_penalty_factor=1.0
 
 loss_agg_mode="token-mean"
 
-enable_filter_groups=False
-filter_groups_metric=acc
+enable_filter_groups=True
+filter_groups_metric=score
 max_num_gen_batches=10
 
 train_prompt_bsz=512
@@ -134,10 +134,6 @@ python3 -m recipe.ours.main_our \
     trainer.total_training_steps=100 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
-    tasksampler.ts_ratio=8 \
-    tasksampler.framework=4 \
-    tasksampler.bandit_sample_strategy='topk'\
-    tasksampler.bandit_lower_bound=0.3\
-    tasksampler.bandit_upper_bound=0.7\
-    tasksampler.bandit_decay_ratio=0.5\
+    tasksampler.ts_ratio=1 \
+    tasksampler.framework=0 \
     "${@:1}"
