@@ -3,6 +3,7 @@ set -x
 # export VLLM_ATTENTION_BACKEND=XFORMERS
 # export NCCL_P2P_DISABLE=1
 
+export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 # Default values
 MODEL_PATH="$HOME/DeepScaleR-1.5B-Preview"
 # Possible values: aime, amc, math, minerva, olympiad_bench
