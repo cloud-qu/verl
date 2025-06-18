@@ -55,8 +55,8 @@ top_k=-1 # 0 for HF rollout, -1 for vLLM rollout
 
 # Mathematically equivalent
 use_dynamic_bsz=False
-infer_micro_batch_size=256
-train_micro_batch_size=256
+infer_micro_batch_size=128
+train_micro_batch_size=128
 offload=False
 
 python3 -m recipe.ours.main_our \
