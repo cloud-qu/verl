@@ -180,6 +180,8 @@ class TaskRunner:
             score_lst = []
             for r in response_lst:
                 score = reward_fn(r, ground_truth)
+                if isinstance(score, dict):
+                    score = score['acc'] if 'acc' in score else score['score']
                 score_lst.append(score)
             max_score = np.max(score_lst)
             total_scores.append(score_lst)

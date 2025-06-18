@@ -87,6 +87,7 @@ pip install -U huggingface_hub
 # bash recipe/ours/scripts/math/generation_prior.sh #math train prior
 # python examples/data_preprocess/countdown.py
 # python examples/data_preprocess/arc1d.py
+# python examples/data_preprocess/geo3k.py
 
 pip install tabulate
 

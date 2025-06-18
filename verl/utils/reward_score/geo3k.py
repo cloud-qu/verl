@@ -29,4 +29,7 @@ def acc_reward(predict_str: str, ground_truth: str) -> float:
 
 
 def compute_score(predict_str: str, ground_truth: str) -> float:
-    return 0.9 * acc_reward(predict_str, ground_truth) + 0.1 * format_reward(predict_str)
+    # return 0.9 * acc_reward(predict_str, ground_truth) + 0.1 * format_reward(predict_str)
+    acc = acc_reward(predict_str, ground_truth)
+    format_score = format_reward(predict_str)
+    return {'acc': acc, 'score': acc if acc == 1.0 else 0.1 * format_score, 'format_score': format_score}

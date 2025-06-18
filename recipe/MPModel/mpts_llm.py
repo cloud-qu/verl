@@ -112,6 +112,8 @@ class PosteriorSampler:
         self.upper_bound = args.tasksampler.bandit_upper_bound
         self.upper_bound_decay_steps = args.tasksampler.bandit_upper_decay_steps
         self.upper_bound_decay_lower = args.tasksampler.bandit_upper_decay_lower
+        self.target_decay_steps = args.tasksampler.bandit_target_decay_steps
+        self.target_decay_lower = args.tasksampler.bandit_target_decay_lower
         self.sampling_strategy = args.tasksampler.bandit_sample_strategy
         self.no_update = args.tasksampler.bandit_no_update
         
@@ -190,6 +192,10 @@ class PosteriorSampler:
         if self.upper_bound_decay_steps > 0:
             decay_factor = (self.upper_bound - self.upper_bound_decay_lower) / self.upper_bound_decay_steps
             self.upper_bound = max(self.upper_bound - decay_factor, self.upper_bound_decay_lower)
+        if self.target_decay_steps > 0:
+            decay_factor = (self.target_mean - self.target_decay_lower) / self.target_decay_steps
+            self.target_mean = max(self.target_mean - decay_factor, self.target_decay_lower)
+            
         return batch_candidates_dict, torch.tensor(sampled_r[sampled_index])#.to('cuda')
 
     def train(self, batch_candidates_dict, y):

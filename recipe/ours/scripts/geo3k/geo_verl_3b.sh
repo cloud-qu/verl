@@ -28,9 +28,9 @@ enable_filter_groups=False
 filter_groups_metric=acc
 max_num_gen_batches=10
 
-train_prompt_bsz=256
+train_prompt_bsz=512
 gen_prompt_bsz=$((train_prompt_bsz * 1))
-train_prompt_mini_bsz=64
+train_prompt_mini_bsz=256
 n_resp_per_prompt=8
 
 # Ray
@@ -55,8 +55,8 @@ top_k=-1 # 0 for HF rollout, -1 for vLLM rollout
 
 # Mathematically equivalent
 use_dynamic_bsz=False
-infer_micro_batch_size=64
-train_micro_batch_size=64
+infer_micro_batch_size=256
+train_micro_batch_size=256
 offload=False
 
 python3 -m recipe.ours.main_our \
@@ -125,13 +125,13 @@ python3 -m recipe.ours.main_our \
     trainer.logger=['console','wandb'] \
     trainer.project_name="${project_name}" \
     trainer.experiment_name="${exp_name}" \
-    trainer.n_gpus_per_node=4 \
+    trainer.n_gpus_per_node=8 \
     trainer.nnodes="${NNODES}" \
-    trainer.val_before_train=True \
-    trainer.test_freq=5 \
-    trainer.save_freq=5 \
+    trainer.val_before_train=False \
+    trainer.test_freq=10 \
+    trainer.save_freq=10 \
     trainer.total_epochs=200 \
-    trainer.total_training_steps=160 \
+    trainer.total_training_steps=100 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
     tasksampler.ts_ratio=1 \

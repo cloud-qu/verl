@@ -3,10 +3,10 @@ set -xeuo pipefail
 export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
-project_name='countdown'
-exp_name='verl-3b-countdown-topk-noinit-ppo'
+project_name='geo3k'
+exp_name='verl-3b-geo3k-dapo'
 
-adv_estimator=gae
+adv_estimator=grpo
 
 use_kl_in_reward=False
 kl_coef=0.0
@@ -16,21 +16,21 @@ kl_loss_coef=0.00
 clip_ratio_low=0.2
 clip_ratio_high=0.28
 
-max_prompt_length=$((256))
-max_response_length=$((1024))
+max_prompt_length=$((1024))
+max_response_length=$((1024 * 2))
 enable_overlong_buffer=False
 overlong_buffer_len=$((1024 * 4))
 overlong_penalty_factor=1.0
 
 loss_agg_mode="token-mean"
 
-enable_filter_groups=False
-filter_groups_metric=acc
+enable_filter_groups=True
+filter_groups_metric=score
 max_num_gen_batches=10
 
-train_prompt_bsz=256
+train_prompt_bsz=512
 gen_prompt_bsz=$((train_prompt_bsz * 1))
-train_prompt_mini_bsz=64
+train_prompt_mini_bsz=256
 n_resp_per_prompt=8
 
 # Ray
@@ -40,11 +40,11 @@ RUNTIME_ENV=${RUNTIME_ENV:-"${WORKING_DIR}/verl/trainer/runtime_env.yaml"}
 NNODES=${NNODES:-1}
 # Paths
 RAY_DATA_HOME=${RAY_DATA_HOME:-"${HOME}/verl"}
-MODEL_PATH=${MODEL_PATH:-"${RAY_DATA_HOME}/models/Qwen2.5-3B"}
+MODEL_PATH=${MODEL_PATH:-"${RAY_DATA_HOME}/models/Qwen2.5-VL-3B-Instruct"}
 # MODEL_PATH=${MODEL_PATH:-"/home/quy/deepscaler/hfmodels/DeepSeek-R1-Distill-Qwen-1.5B"}
 CKPTS_DIR=${CKPTS_DIR:-"${RAY_DATA_HOME}/ckpts/${project_name}/${exp_name}"}
-TRAIN_FILE=${TRAIN_FILE:-"${RAY_DATA_HOME}/data/countdown3to4/train.parquet"}
-TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/data/countdown3to4/test.parquet"}
+TRAIN_FILE=${TRAIN_FILE:-"${RAY_DATA_HOME}/data/geo3k/train.parquet"}
+TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/data/geo3k/test.parquet"}
 # TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/data/dapo/aime-2024.parquet"}
 
 # Algorithm
@@ -54,9 +54,9 @@ top_p=1.0
 top_k=-1 # 0 for HF rollout, -1 for vLLM rollout
 
 # Mathematically equivalent
-use_dynamic_bsz=True
-infer_micro_batch_size=null
-train_micro_batch_size=null
+use_dynamic_bsz=False
+infer_micro_batch_size=256
+train_micro_batch_size=256
 offload=False
 
 python3 -m recipe.ours.main_our \
@@ -64,6 +64,7 @@ python3 -m recipe.ours.main_our \
     data.val_files="${TEST_FILE}" \
     data.prompt_key=prompt \
     data.truncation='left' \
+    data.image_key=images \
     data.max_prompt_length=${max_prompt_length} \
     data.max_response_length=${max_response_length} \
     data.gen_batch_size=${gen_prompt_bsz} \
@@ -80,20 +81,13 @@ python3 -m recipe.ours.main_our \
     algorithm.filter_groups.enable=${enable_filter_groups} \
     algorithm.filter_groups.metric=${filter_groups_metric} \
     algorithm.filter_groups.max_num_gen_batches=${max_num_gen_batches} \
-    critic.optim.lr=1e-5 \
-    critic.model.use_remove_padding=True \
-    critic.model.path="${MODEL_PATH}" \
-    critic.model.enable_gradient_checkpointing=True \
-    critic.model.fsdp_config.param_offload=${offload} \
-    critic.model.fsdp_config.optimizer_offload=${offload} \
-    critic.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*6)) \
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.actor.use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.ref.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.rollout.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
-    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
-    actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
-    actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
+    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*4)) \
+    actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*8)) \
+    actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*8)) \
     actor_rollout_ref.model.path="${MODEL_PATH}" \
     actor_rollout_ref.model.enable_gradient_checkpointing=True \
     actor_rollout_ref.actor.optim.lr=1e-6 \
@@ -107,7 +101,7 @@ python3 -m recipe.ours.main_our \
     actor_rollout_ref.actor.grad_clip=1.0 \
     actor_rollout_ref.actor.loss_agg_mode=${loss_agg_mode} \
     actor_rollout_ref.actor.ulysses_sequence_parallel_size=1 \
-    actor_rollout_ref.rollout.gpu_memory_utilization=0.85 \
+    actor_rollout_ref.rollout.gpu_memory_utilization=0.8 \
     actor_rollout_ref.rollout.log_prob_micro_batch_size=${infer_micro_batch_size} \
     actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
     actor_rollout_ref.rollout.enable_chunked_prefill=True \
@@ -137,16 +131,9 @@ python3 -m recipe.ours.main_our \
     trainer.test_freq=10 \
     trainer.save_freq=10 \
     trainer.total_epochs=200 \
-    trainer.total_training_steps=120 \
+    trainer.total_training_steps=100 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
-    tasksampler.ts_ratio=8 \
-    tasksampler.framework=4 \
-    tasksampler.bandit_sample_strategy='topk'\
-    tasksampler.bandit_lower_bound=0.3\
-    tasksampler.bandit_upper_bound=0.7\
-    tasksampler.bandit_decay_ratio=0.5\
-    trainer.total_training_steps=120 \
-    tasksampler.bandit_init=False\
-    tasksampler.bandit_init_dir="${HOME}/verl/recipe/ours/scripts/math/index_score.json"\
+    tasksampler.ts_ratio=1 \
+    tasksampler.framework=0 \
     "${@:1}"

@@ -576,11 +576,14 @@ class RayPPOTrainer:
             input_ids = test_batch.batch["input_ids"]
             # TODO: Can we keep special tokens except for padding tokens?
             input_texts = [self.tokenizer.decode(ids, skip_special_tokens=True) for ids in input_ids]
-            sample_inputs.extend(input_texts)
 
             batch_keys_to_pop = ["input_ids", "attention_mask", "position_ids"]
             non_tensor_batch_keys_to_pop = ["raw_prompt_ids"]
             if "multi_modal_inputs" in test_batch.non_tensor_batch:
+                input_texts_img = []
+                for id,text in enumerate(input_texts):
+                    input_texts_img.append(text + str(test_batch.non_tensor_batch["multi_modal_data"][id]['image'][0]))
+                input_texts = input_texts_img
                 non_tensor_batch_keys_to_pop.extend(["multi_modal_data", "multi_modal_inputs"])
             if "raw_prompt" in test_batch.non_tensor_batch:
                 non_tensor_batch_keys_to_pop.append("raw_prompt")
@@ -590,6 +593,7 @@ class RayPPOTrainer:
                 batch_keys=batch_keys_to_pop,
                 non_tensor_batch_keys=non_tensor_batch_keys_to_pop,
             )
+            sample_inputs.extend(input_texts)
 
             test_gen_batch.meta_info = {
                 "eos_token_id": self.tokenizer.eos_token_id,
