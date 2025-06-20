@@ -2761,7 +2761,7 @@ def main_wrapper_geo_7b_uniform(is_debug=False):
     from recipe.ours.main_our_remote import main
     if is_debug:
         nnodes = 1
-        n_gpus_per_node=1
+        n_gpus_per_node=4
     else:
         nnodes = 2
         n_gpus_per_node=4
@@ -3206,7 +3206,7 @@ if __name__ == "__main__":
 
     if debug=="1":
         print("debug mode")
-        main_wrapper_deepscaler_topk(is_debug=True)
+        main_wrapper_geo_7b_uniform(is_debug=True)
         exit()
 
     if slurm_job_id == "5163046":
@@ -3248,7 +3248,7 @@ if __name__ == "__main__":
         main_wrapper_math_topk_offline()
     elif slurm_job_id == "5180739":
         main_wrapper_math_7b_topk_noinit_new()
-    elif slurm_job_id == "5190157":
+    elif slurm_job_id == "5190272":
         main_wrapper_geo_7b_uniform()
     elif slurm_job_id == "5190025xx":
         main_wrapper_geo_7b_topk_noinit()
