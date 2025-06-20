@@ -2814,7 +2814,7 @@ def main_wrapper_geo_7b_uniform(is_debug=False):
     # Mathematically equivalent
     use_dynamic_bsz = True
     infer_micro_batch_size=512
-    train_micro_batch_size=128
+    train_micro_batch_size=256
     offload = False
 
     with initialize(config_path="recipe/ours/config", version_base=None):
@@ -2846,8 +2846,8 @@ def main_wrapper_geo_7b_uniform(is_debug=False):
                 f"actor_rollout_ref.ref.log_prob_use_dynamic_bsz={use_dynamic_bsz}",
                 f"actor_rollout_ref.rollout.log_prob_use_dynamic_bsz={use_dynamic_bsz}",
                 f"actor_rollout_ref.actor.ppo_max_token_len_per_gpu={(max_prompt_length + max_response_length) * 2}",
-                f"actor_rollout_ref.ref.log_prob_max_token_len_per_gpu={(max_prompt_length + max_response_length) * 12}",
-                f"actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu={(max_prompt_length + max_response_length) * 12}",
+                f"actor_rollout_ref.ref.log_prob_max_token_len_per_gpu={(max_prompt_length + max_response_length) * 4}",
+                f"actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu={(max_prompt_length + max_response_length) * 4}",
                 f"actor_rollout_ref.model.path={MODEL_PATH}",
                 "actor_rollout_ref.model.enable_gradient_checkpointing=True",
                 "actor_rollout_ref.actor.optim.lr=1e-6",
@@ -2861,7 +2861,7 @@ def main_wrapper_geo_7b_uniform(is_debug=False):
                 "actor_rollout_ref.actor.grad_clip=1.0",
                 f"actor_rollout_ref.actor.loss_agg_mode={loss_agg_mode}",
                 "actor_rollout_ref.actor.ulysses_sequence_parallel_size=1",
-                "actor_rollout_ref.rollout.gpu_memory_utilization=0.85",
+                "actor_rollout_ref.rollout.gpu_memory_utilization=0.7",
                 f"actor_rollout_ref.rollout.log_prob_micro_batch_size={infer_micro_batch_size}",
                 "actor_rollout_ref.rollout.tensor_model_parallel_size=1",
                 "actor_rollout_ref.rollout.enable_chunked_prefill=True",
@@ -2959,7 +2959,7 @@ def main_wrapper_geo_7b_topk_noinit(is_debug=False):
     # Mathematically equivalent
     use_dynamic_bsz = True
     infer_micro_batch_size=512
-    train_micro_batch_size=128
+    train_micro_batch_size=256
     offload = False
 
     with initialize(config_path="recipe/ours/config", version_base=None):
@@ -3006,7 +3006,7 @@ def main_wrapper_geo_7b_topk_noinit(is_debug=False):
                 "actor_rollout_ref.actor.grad_clip=1.0",
                 f"actor_rollout_ref.actor.loss_agg_mode={loss_agg_mode}",
                 "actor_rollout_ref.actor.ulysses_sequence_parallel_size=1",
-                "actor_rollout_ref.rollout.gpu_memory_utilization=0.85",
+                "actor_rollout_ref.rollout.gpu_memory_utilization=0.7",
                 f"actor_rollout_ref.rollout.log_prob_micro_batch_size={infer_micro_batch_size}",
                 "actor_rollout_ref.rollout.tensor_model_parallel_size=1",
                 "actor_rollout_ref.rollout.enable_chunked_prefill=True",
@@ -3107,7 +3107,7 @@ def main_wrapper_geo_7b_dapo(is_debug=False):
     # Mathematically equivalent
     use_dynamic_bsz = True
     infer_micro_batch_size=512
-    train_micro_batch_size=128
+    train_micro_batch_size=256
     offload = False
 
     with initialize(config_path="recipe/ours/config", version_base=None):
@@ -3154,7 +3154,7 @@ def main_wrapper_geo_7b_dapo(is_debug=False):
                 "actor_rollout_ref.actor.grad_clip=1.0",
                 f"actor_rollout_ref.actor.loss_agg_mode={loss_agg_mode}",
                 "actor_rollout_ref.actor.ulysses_sequence_parallel_size=1",
-                "actor_rollout_ref.rollout.gpu_memory_utilization=0.85",
+                "actor_rollout_ref.rollout.gpu_memory_utilization=0.7",
                 f"actor_rollout_ref.rollout.log_prob_micro_batch_size={infer_micro_batch_size}",
                 "actor_rollout_ref.rollout.tensor_model_parallel_size=1",
                 "actor_rollout_ref.rollout.enable_chunked_prefill=True",
