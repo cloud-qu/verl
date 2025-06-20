@@ -3245,11 +3245,11 @@ if __name__ == "__main__":
         main_wrapper_math_topk_offline()
     elif slurm_job_id == "5180739":
         main_wrapper_math_7b_topk_noinit_new()
-    elif slurm_job_id == "5190024":
+    elif slurm_job_id == "5190157":
         main_wrapper_geo_7b_uniform()
-    elif slurm_job_id == "5190025":
+    elif slurm_job_id == "5190025xx":
         main_wrapper_geo_7b_topk_noinit()
-    elif slurm_job_id == "5190026":
+    elif slurm_job_id == "5190026xxx":
         main_wrapper_geo_7b_dapo()
     else:
         raise ValueError(f"Invalid slurm job id: {slurm_job_id}")
