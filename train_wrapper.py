@@ -2813,7 +2813,7 @@ def main_wrapper_geo_7b_uniform(is_debug=False):
     top_k = -1  # 0 for HF rollout, -1 for vLLM rollout
 
     # Mathematically equivalent
-    use_dynamic_bsz = True
+    use_dynamic_bsz = False
     infer_micro_batch_size=512
     train_micro_batch_size=256
     offload = False
@@ -2959,7 +2959,7 @@ def main_wrapper_geo_7b_topk_noinit(is_debug=False):
     top_k = -1  # 0 for HF rollout, -1 for vLLM rollout
 
     # Mathematically equivalent
-    use_dynamic_bsz = True
+    use_dynamic_bsz = False
     infer_micro_batch_size=512
     train_micro_batch_size=256
     offload = False
@@ -3108,7 +3108,7 @@ def main_wrapper_geo_7b_dapo(is_debug=False):
     top_k = -1  # 0 for HF rollout, -1 for vLLM rollout
 
     # Mathematically equivalent
-    use_dynamic_bsz = True
+    use_dynamic_bsz = False
     infer_micro_batch_size=512
     train_micro_batch_size=256
     offload = False
