@@ -17,7 +17,7 @@
 
 # export VLLM_ATTENTION_BACKEND=XFORMERS
 export WANDB_API_KEY=e07f72e77a1e06646e8091c6fd2e8b1c9a197a17
-
+ulimit -n 65536
 
 nodes=$(scontrol show hostnames "$SLURM_JOB_NODELIST")
 nodes_array=($nodes)
