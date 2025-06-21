@@ -3,9 +3,10 @@
 import argparse
 import os
 
+import torch.multiprocessing as mp
 from hydra import compose, initialize
 from omegaconf import OmegaConf
-import torch.multiprocessing as mp
+
 mp.set_sharing_strategy('file_system')
 
 
@@ -2829,6 +2830,7 @@ def main_wrapper_geo_7b_uniform(is_debug=False):
                 f"data.val_files='{TEST_FILE}'",
                 "data.prompt_key=prompt",
                 "data.truncation='left'",
+                "data.image_key=images",
                 f"data.max_prompt_length={max_prompt_length}",
                 f"data.max_response_length={max_response_length}",
                 f"data.train_batch_size={train_prompt_bsz}",
@@ -2975,6 +2977,7 @@ def main_wrapper_geo_7b_topk_noinit(is_debug=False):
                 f"data.val_files='{TEST_FILE}'",
                 "data.prompt_key=prompt",
                 "data.truncation='left'",
+                "data.image_key=images",
                 f"data.max_prompt_length={max_prompt_length}",
                 f"data.max_response_length={max_response_length}",
                 f"data.train_batch_size={train_prompt_bsz}",
@@ -3124,6 +3127,7 @@ def main_wrapper_geo_7b_dapo(is_debug=False):
                 f"data.val_files='{TEST_FILE}'",
                 "data.prompt_key=prompt",
                 "data.truncation='left'",
+                "data.image_key=images",
                 f"data.max_prompt_length={max_prompt_length}",
                 f"data.max_response_length={max_response_length}",
                 f"data.train_batch_size={train_prompt_bsz}",

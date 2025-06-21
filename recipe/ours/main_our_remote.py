@@ -62,6 +62,15 @@ def get_custom_reward_fn(config):
 
 @hydra.main(config_path="config", config_name="our_trainer", version_base=None)
 def main(config):
+    import resource
+
+    # 设置最大文件打开数限制
+    soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+    desired = min(65535, hard)
+    resource.setrlimit(resource.RLIMIT_NOFILE, (desired, hard))
+
+    print(f"[INFO] File descriptor limit set to: {desired}")
+
     run_ppo(config)
 
 
