@@ -223,7 +223,7 @@ class OurRayPPOTrainer(RayPPOTrainer):
         self.train_dataloader = StatefulDataLoader(
             dataset=self.train_dataset,
             batch_size=self.train_batch_size,
-            num_workers=self.config.data.get("dataloader_num_workers", 8),
+            num_workers=self.config.data.get("dataloader_num_workers", 1),
             drop_last=True,
             collate_fn=self.collate_fn,
             sampler=self.train_sampler,
@@ -236,7 +236,7 @@ class OurRayPPOTrainer(RayPPOTrainer):
         self.val_dataloader = StatefulDataLoader(
             dataset=self.val_dataset,
             batch_size=val_batch_size,
-            num_workers=self.config.data.get("dataloader_num_workers", 8),
+            num_workers=self.config.data.get("dataloader_num_workers", 1),
             shuffle=False,
             drop_last=False,
             collate_fn=collate_fn,
@@ -415,7 +415,7 @@ class OurRayPPOTrainer(RayPPOTrainer):
                 self.train_dataloader = StatefulDataLoader(
                                             dataset=self.train_dataset,
                                             batch_size=self.train_batch_size,
-                                            num_workers=self.config.data.get("dataloader_num_workers", 8),
+                                            num_workers=self.config.data.get("dataloader_num_workers", 1),
                                             drop_last=True,
                                             collate_fn=self.collate_fn,
                                             sampler=self.train_sampler,
