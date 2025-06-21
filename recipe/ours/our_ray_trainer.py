@@ -420,11 +420,13 @@ class OurRayPPOTrainer(RayPPOTrainer):
                                             collate_fn=self.collate_fn,
                                             sampler=self.train_sampler,
                                         )
-                
+            print('before dataloader')
             for batch_dict in self.train_dataloader:
+                print('after dataloader')
                 if self.task_sampler is not None:
                     batch_dict, sampled_acquisition_score = self.task_sampler.sample_batch(batch_dict)
                 metrics = {}
+                print('after sample batch')
 
                 new_batch: DataProto = DataProto.from_single_dict(batch_dict)
                 num_gen_batches += 1
@@ -443,6 +445,7 @@ class OurRayPPOTrainer(RayPPOTrainer):
                 is_last_step = self.global_steps >= self.total_training_steps
 
                 with _timer("step", timing_raw):
+                    print('before generation')
                     # generate a batch
                     start_time = time.time()
                     with _timer("gen", timing_raw):
