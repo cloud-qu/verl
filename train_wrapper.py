@@ -7,6 +7,7 @@ from hydra import compose, initialize
 from omegaconf import OmegaConf
 
 
+
 def main_wrapper_deepscaler_uniform(is_debug=False):
     from recipe.deepscaler.main_deepscaler_remote import main
     if is_debug:
@@ -2760,8 +2761,8 @@ def main_wrapper_math_7b_topk_noinit_new(is_debug=False):
 def main_wrapper_geo_7b_uniform(is_debug=False):
     from recipe.ours.main_our_remote import main
     if is_debug:
-        nnodes = 1
-        n_gpus_per_node=4
+        nnodes = 2
+        n_gpus_per_node=2
     else:
         nnodes = 2
         n_gpus_per_node=4
@@ -3248,8 +3249,8 @@ if __name__ == "__main__":
         main_wrapper_math_topk_offline()
     elif slurm_job_id == "5180739":
         main_wrapper_math_7b_topk_noinit_new()
-    elif slurm_job_id == "5190731":
-        main_wrapper_geo_7b_uniform()
+    elif slurm_job_id == "5191651":
+        main_wrapper_geo_7b_uniform(is_debug=True)
     elif slurm_job_id == "5190732":
         main_wrapper_geo_7b_topk_noinit()
     elif slurm_job_id == "5190733":
