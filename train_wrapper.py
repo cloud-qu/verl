@@ -2771,10 +2771,10 @@ def main_wrapper_geo_7b_uniform(is_debug=False):
     exp_name = 'verl-7b-geo'
     WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
     RAY_DATA_HOME = f"{WORKING_DIR}"
-    # MODEL_PATH = f"{RAY_DATA_HOME}/models/Qwen2.5-VL-7B-Instruct"
-    MODEL_PATH = f"Qwen/Qwen2.5-VL-7B-Instruct"
-    # if not os.path.exists(MODEL_PATH):
-    #     os.system("huggingface-cli download --resume-download Qwen/Qwen2.5-VL-7B-Instruct --local-dir models/Qwen2.5-VL-7B-Instruct")
+    MODEL_PATH = f"{RAY_DATA_HOME}/models/Qwen2.5-VL-7B-Instruct"
+    # MODEL_PATH = f"Qwen/Qwen2.5-VL-7B-Instruct"
+    if not os.path.exists(MODEL_PATH):
+        os.system("huggingface-cli download --resume-download Qwen/Qwen2.5-VL-7B-Instruct --local-dir models/Qwen2.5-VL-7B-Instruct")
     CKPTS_DIR = f"{RAY_DATA_HOME}/ckpts/{project_name}/{exp_name}"
     TRAIN_FILE = f"{RAY_DATA_HOME}/data/geo3k/train.parquet"
     TEST_FILE = f"{RAY_DATA_HOME}/data/geo3k/test.parquet"
@@ -2917,10 +2917,10 @@ def main_wrapper_geo_7b_topk_noinit(is_debug=False):
     exp_name = 'verl-7b-geo-topk-noinit'
     WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
     RAY_DATA_HOME = f"{WORKING_DIR}"
-    # MODEL_PATH = f"{RAY_DATA_HOME}/models/Qwen2.5-VL-7B-Instruct"
-    MODEL_PATH = f"Qwen/Qwen2.5-VL-7B-Instruct"
-    # if not os.path.exists(MODEL_PATH):
-    #     os.system("huggingface-cli download --resume-download Qwen/Qwen2.5-VL-7B-Instruct --local-dir models/Qwen2.5-VL-7B-Instruct")
+    MODEL_PATH = f"{RAY_DATA_HOME}/models/Qwen2.5-VL-7B-Instruct"
+    # MODEL_PATH = f"Qwen/Qwen2.5-VL-7B-Instruct"
+    if not os.path.exists(MODEL_PATH):
+        os.system("huggingface-cli download --resume-download Qwen/Qwen2.5-VL-7B-Instruct --local-dir models/Qwen2.5-VL-7B-Instruct")
     CKPTS_DIR = f"{RAY_DATA_HOME}/ckpts/{project_name}/{exp_name}"
     TRAIN_FILE = f"{RAY_DATA_HOME}/data/geo3k/train.parquet"
     TEST_FILE = f"{RAY_DATA_HOME}/data/geo3k/test.parquet"
@@ -3066,10 +3066,10 @@ def main_wrapper_geo_7b_dapo(is_debug=False):
     exp_name = 'verl-7b-geo-dapo'
     WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
     RAY_DATA_HOME = f"{WORKING_DIR}"
-    # MODEL_PATH = f"{RAY_DATA_HOME}/models/Qwen2.5-VL-7B-Instruct"
-    MODEL_PATH = f"Qwen/Qwen2.5-VL-7B-Instruct"
-    # if not os.path.exists(MODEL_PATH):
-    #     os.system("huggingface-cli download --resume-download Qwen/Qwen2.5-VL-7B-Instruct --local-dir models/Qwen2.5-VL-7B-Instruct")
+    MODEL_PATH = f"{RAY_DATA_HOME}/models/Qwen2.5-VL-7B-Instruct"
+    # MODEL_PATH = f"Qwen/Qwen2.5-VL-7B-Instruct"
+    if not os.path.exists(MODEL_PATH):
+        os.system("huggingface-cli download --resume-download Qwen/Qwen2.5-VL-7B-Instruct --local-dir models/Qwen2.5-VL-7B-Instruct")
     CKPTS_DIR = f"{RAY_DATA_HOME}/ckpts/{project_name}/{exp_name}"
     TRAIN_FILE = f"{RAY_DATA_HOME}/data/geo3k/train.parquet"
     TEST_FILE = f"{RAY_DATA_HOME}/data/geo3k/test.parquet"
