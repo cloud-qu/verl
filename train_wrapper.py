@@ -2805,7 +2805,7 @@ def main_wrapper_geo_7b_uniform(is_debug=False):
     filter_groups_metric = 'acc'
     max_num_gen_batches = 10
 
-    train_prompt_bsz = 512
+    train_prompt_bsz = 256
     gen_prompt_bsz = train_prompt_bsz
     train_prompt_mini_bsz = 128
     n_resp_per_prompt = 8
@@ -2818,7 +2818,7 @@ def main_wrapper_geo_7b_uniform(is_debug=False):
 
     # Mathematically equivalent
     use_dynamic_bsz = False
-    infer_micro_batch_size=512
+    infer_micro_batch_size=256
     train_micro_batch_size=128
     offload = False
 
@@ -2952,7 +2952,7 @@ def main_wrapper_geo_7b_topk_noinit(is_debug=False):
     filter_groups_metric = 'acc'
     max_num_gen_batches = 10
 
-    train_prompt_bsz = 512
+    train_prompt_bsz = 256
     gen_prompt_bsz = train_prompt_bsz
     train_prompt_mini_bsz = 128
     n_resp_per_prompt = 8
@@ -2965,7 +2965,7 @@ def main_wrapper_geo_7b_topk_noinit(is_debug=False):
 
     # Mathematically equivalent
     use_dynamic_bsz = False
-    infer_micro_batch_size=512
+    infer_micro_batch_size=256
     train_micro_batch_size=128
     offload = False
 
@@ -3102,7 +3102,7 @@ def main_wrapper_geo_7b_dapo(is_debug=False):
     filter_groups_metric = 'score'
     max_num_gen_batches = 10
 
-    train_prompt_bsz = 512
+    train_prompt_bsz = 256
     gen_prompt_bsz = train_prompt_bsz
     train_prompt_mini_bsz = 128
     n_resp_per_prompt = 8
@@ -3115,7 +3115,7 @@ def main_wrapper_geo_7b_dapo(is_debug=False):
 
     # Mathematically equivalent
     use_dynamic_bsz = False
-    infer_micro_batch_size=512
+    infer_micro_batch_size=256
     train_micro_batch_size=128
     offload = False
 
