@@ -41,11 +41,9 @@ NNODES=${NNODES:-1}
 # Paths
 RAY_DATA_HOME=${RAY_DATA_HOME:-"${HOME}/verl"}
 MODEL_PATH=${MODEL_PATH:-"${RAY_DATA_HOME}/models/Qwen2.5-7B"}
-# MODEL_PATH=${MODEL_PATH:-"/home/quy/deepscaler/hfmodels/DeepSeek-R1-Distill-Qwen-1.5B"}
 CKPTS_DIR=${CKPTS_DIR:-"${RAY_DATA_HOME}/ckpts/${project_name}/${exp_name}"}
 TRAIN_FILE=${TRAIN_FILE:-"${RAY_DATA_HOME}/data/countdown3to4/train.parquet"}
 TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/data/countdown3to4/test.parquet"}
-# TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/data/dapo/aime-2024.parquet"}
 
 # Algorithm
 temperature=1.0
@@ -129,7 +127,7 @@ python3 -m recipe.ours.main_our \
     trainer.val_before_train=False \
     trainer.test_freq=10 \
     trainer.save_freq=10 \
-    trainer.total_epochs=600 \
+    trainer.total_epochs=200 \
     trainer.total_training_steps=120 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \

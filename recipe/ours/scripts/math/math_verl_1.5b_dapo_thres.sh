@@ -3,10 +3,10 @@ set -xeuo pipefail
 export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
-project_name='countdown'
-exp_name='verl-3b-countdown-ppo'
+project_name='math'
+exp_name='verl-1.5b-math-dapo-thres'
 
-adv_estimator=gae
+adv_estimator=grpo
 
 use_kl_in_reward=False
 kl_coef=0.0
@@ -16,21 +16,23 @@ kl_loss_coef=0.00
 clip_ratio_low=0.2
 clip_ratio_high=0.28
 
-max_prompt_length=$((256))
-max_response_length=$((1024))
+max_prompt_length=$((1024))
+max_response_length=$((1024 * 8))
 enable_overlong_buffer=False
 overlong_buffer_len=$((1024 * 4))
 overlong_penalty_factor=1.0
 
 loss_agg_mode="token-mean"
 
-enable_filter_groups=False
-filter_groups_metric=acc
-max_num_gen_batches=10
+enable_filter_groups=True
+filter_groups_metric=score
+max_num_gen_batches=4
+filter_min=0.3
+filter_max=0.7
 
 train_prompt_bsz=256
 gen_prompt_bsz=$((train_prompt_bsz * 1))
-train_prompt_mini_bsz=64
+train_prompt_mini_bsz=128
 n_resp_per_prompt=8
 
 # Ray
@@ -40,10 +42,10 @@ RUNTIME_ENV=${RUNTIME_ENV:-"${WORKING_DIR}/verl/trainer/runtime_env.yaml"}
 NNODES=${NNODES:-1}
 # Paths
 RAY_DATA_HOME=${RAY_DATA_HOME:-"${HOME}/verl"}
-MODEL_PATH=${MODEL_PATH:-"${RAY_DATA_HOME}/models/Qwen2.5-3B"}
+MODEL_PATH=${MODEL_PATH:-"${RAY_DATA_HOME}/models/DeepSeek-R1-Distill-Qwen-1.5B"}
 CKPTS_DIR=${CKPTS_DIR:-"${RAY_DATA_HOME}/ckpts/${project_name}/${exp_name}"}
-TRAIN_FILE=${TRAIN_FILE:-"${RAY_DATA_HOME}/data/countdown3to4/train.parquet"}
-TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/data/countdown3to4/test.parquet"}
+TRAIN_FILE=${TRAIN_FILE:-"${RAY_DATA_HOME}/data/math/train.parquet"}
+TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/data/deepscaler/aime.parquet"}
 
 # Algorithm
 temperature=1.0
@@ -78,20 +80,15 @@ python3 -m recipe.ours.main_our \
     algorithm.filter_groups.enable=${enable_filter_groups} \
     algorithm.filter_groups.metric=${filter_groups_metric} \
     algorithm.filter_groups.max_num_gen_batches=${max_num_gen_batches} \
-    critic.optim.lr=1e-5 \
-    critic.model.use_remove_padding=True \
-    critic.model.path="${MODEL_PATH}" \
-    critic.model.enable_gradient_checkpointing=True \
-    critic.model.fsdp_config.param_offload=${offload} \
-    critic.model.fsdp_config.optimizer_offload=${offload} \
-    critic.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*6)) \
+    algorithm.filter_groups.filter_min=${filter_min},\
+    algorithm.filter_groups.filter_max=${filter_max},\
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.actor.use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.ref.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
     actor_rollout_ref.rollout.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
-    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
-    actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
-    actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*12)) \
+    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*4)) \
+    actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*4)) \
+    actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=$(((max_prompt_length + max_response_length)*4)) \
     actor_rollout_ref.model.path="${MODEL_PATH}" \
     actor_rollout_ref.model.enable_gradient_checkpointing=True \
     actor_rollout_ref.actor.optim.lr=1e-6 \
@@ -132,10 +129,9 @@ python3 -m recipe.ours.main_our \
     trainer.n_gpus_per_node=8 \
     trainer.nnodes="${NNODES}" \
     trainer.val_before_train=False \
-    trainer.test_freq=10 \
-    trainer.save_freq=10 \
-    trainer.total_epochs=200 \
-    trainer.total_training_steps=120 \
+    trainer.test_freq=5 \
+    trainer.save_freq=5 \
+    trainer.total_epochs=40 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
     tasksampler.ts_ratio=1 \

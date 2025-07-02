@@ -25,7 +25,9 @@ def compute_score(solution_str, ground_truth) -> float:
     except Exception as e:
         print(e)
 
-    return retval
+    return {'acc': retval, 'score': retval}
+
+    # return retval
 
 
 # string normalization from https://github.com/EleutherAI/lm-evaluation-harness/blob/master/lm_eval/tasks/hendrycks_math.py

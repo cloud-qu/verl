@@ -75,9 +75,6 @@ def load_reward_manager(config, tokenizer, num_examine, **reward_kwargs):
         from verl.workers.reward_manager import DAPORewardManager
 
         reward_manager_cls = DAPORewardManager
-    elif reward_manager_name == "deepscaler":
-        from recipe.deepscaler.deepscaler_reward_manager import RewardManager
-        reward_manager_cls = RewardManager
     else:
         raise NotImplementedError
 

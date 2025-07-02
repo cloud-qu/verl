@@ -181,6 +181,12 @@ class TaskRunner:
         elif 'arc1d' in config.data.train_files:
             config.custom_reward_function['path'] = './recipe/ours/reward_func/arc1d_reward.py'
             config.custom_reward_function['name'] = 'compute_score'
+        elif 'math' in config.data.train_files:
+            config.custom_reward_function['path'] = './recipe/ours/reward_func/math_reward.py'
+            config.custom_reward_function['name'] = 'compute_score'
+        elif 'geo3k' in config.data.train_files:
+            config.custom_reward_function['path'] = './recipe/ours/reward_func/geo3k_reward.py'
+            config.custom_reward_function['name'] = 'compute_score'
         reward_fn = load_reward_manager(config, tokenizer, num_examine=0, **config.reward_model.get("reward_kwargs", {}))
         if 'deepscaler' in config.data.val_files:
             config.custom_reward_function['path'] = './recipe/ours/reward_func/deepscaler_reward.py'
@@ -190,6 +196,12 @@ class TaskRunner:
             config.custom_reward_function['name'] = 'compute_score'
         elif 'arc1d' in config.data.val_files:
             config.custom_reward_function['path'] = './recipe/ours/reward_func/arc1d_reward.py'
+            config.custom_reward_function['name'] = 'compute_score'
+        elif 'math' in config.data.val_files:
+            config.custom_reward_function['path'] = './recipe/ours/reward_func/math_reward.py'
+            config.custom_reward_function['name'] = 'compute_score'
+        elif 'geo3k' in config.data.val_files:
+            config.custom_reward_function['path'] = './recipe/ours/reward_func/geo3k_reward.py'
             config.custom_reward_function['name'] = 'compute_score'
         val_reward_fn = load_reward_manager(config, tokenizer, num_examine=1, **config.reward_model.get("reward_kwargs", {}))
         resource_pool_manager = ResourcePoolManager(resource_pool_spec=resource_pool_spec, mapping=mapping)

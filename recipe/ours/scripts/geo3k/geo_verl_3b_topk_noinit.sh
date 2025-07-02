@@ -10,14 +10,14 @@ adv_estimator=grpo
 
 use_kl_in_reward=False
 kl_coef=0.0
-use_kl_loss=False
-kl_loss_coef=0.00
+use_kl_loss=True
+kl_loss_coef=0.01
 
 clip_ratio_low=0.2
 clip_ratio_high=0.28
 
 max_prompt_length=$((1024))
-max_response_length=$((1024 * 2))
+max_response_length=$((1024))
 enable_overlong_buffer=False
 overlong_buffer_len=$((1024 * 4))
 overlong_penalty_factor=1.0
@@ -41,11 +41,9 @@ NNODES=${NNODES:-1}
 # Paths
 RAY_DATA_HOME=${RAY_DATA_HOME:-"${HOME}/verl"}
 MODEL_PATH=${MODEL_PATH:-"${RAY_DATA_HOME}/models/Qwen2.5-VL-3B-Instruct"}
-# MODEL_PATH=${MODEL_PATH:-"/home/quy/deepscaler/hfmodels/DeepSeek-R1-Distill-Qwen-1.5B"}
 CKPTS_DIR=${CKPTS_DIR:-"${RAY_DATA_HOME}/ckpts/${project_name}/${exp_name}"}
 TRAIN_FILE=${TRAIN_FILE:-"${RAY_DATA_HOME}/data/geo3k/train.parquet"}
 TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/data/geo3k/test.parquet"}
-# TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/data/dapo/aime-2024.parquet"}
 
 # Algorithm
 temperature=1.0
@@ -55,7 +53,7 @@ top_k=-1 # 0 for HF rollout, -1 for vLLM rollout
 
 # Mathematically equivalent
 use_dynamic_bsz=False
-infer_micro_batch_size=256
+infer_micro_batch_size=512
 train_micro_batch_size=256
 offload=False
 
@@ -131,7 +129,7 @@ python3 -m recipe.ours.main_our \
     trainer.test_freq=10 \
     trainer.save_freq=10 \
     trainer.total_epochs=200 \
-    trainer.total_training_steps=100 \
+    trainer.total_training_steps=120 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
     tasksampler.ts_ratio=8 \

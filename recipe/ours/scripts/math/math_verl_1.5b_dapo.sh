@@ -4,7 +4,7 @@ export NCCL_P2P_DISABLE=1
 export WANDB_API_KEY=local-66f3d1798a14c58de8f6e44c972276ff3799d7a7
 
 project_name='math'
-exp_name='verl-1.5b-math-ps'
+exp_name='verl-1.5b-math-dapo'
 
 adv_estimator=grpo
 
@@ -24,9 +24,10 @@ overlong_penalty_factor=1.0
 
 loss_agg_mode="token-mean"
 
-enable_filter_groups=False
-filter_groups_metric=acc
-max_num_gen_batches=10
+enable_filter_groups=True
+filter_groups_metric=score
+max_num_gen_batches=4
+
 train_prompt_bsz=256
 gen_prompt_bsz=$((train_prompt_bsz * 1))
 train_prompt_mini_bsz=128
@@ -40,11 +41,9 @@ NNODES=${NNODES:-1}
 # Paths
 RAY_DATA_HOME=${RAY_DATA_HOME:-"${HOME}/verl"}
 MODEL_PATH=${MODEL_PATH:-"${RAY_DATA_HOME}/models/DeepSeek-R1-Distill-Qwen-1.5B"}
-# MODEL_PATH=${MODEL_PATH:-"/home/quy/deepscaler/hfmodels/DeepSeek-R1-Distill-Qwen-1.5B"}
 CKPTS_DIR=${CKPTS_DIR:-"${RAY_DATA_HOME}/ckpts/${project_name}/${exp_name}"}
 TRAIN_FILE=${TRAIN_FILE:-"${RAY_DATA_HOME}/data/math/train.parquet"}
 TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/data/deepscaler/aime.parquet"}
-# TEST_FILE=${TEST_FILE:-"${RAY_DATA_HOME}/data/dapo/aime-2024.parquet"}
 
 # Algorithm
 temperature=1.0
@@ -99,7 +98,7 @@ python3 -m recipe.ours.main_our \
     actor_rollout_ref.actor.grad_clip=1.0 \
     actor_rollout_ref.actor.loss_agg_mode=${loss_agg_mode} \
     actor_rollout_ref.actor.ulysses_sequence_parallel_size=1 \
-    actor_rollout_ref.rollout.gpu_memory_utilization=0.9 \
+    actor_rollout_ref.rollout.gpu_memory_utilization=0.85 \
     actor_rollout_ref.rollout.log_prob_micro_batch_size=${infer_micro_batch_size} \
     actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
     actor_rollout_ref.rollout.enable_chunked_prefill=True \
@@ -126,16 +125,11 @@ python3 -m recipe.ours.main_our \
     trainer.n_gpus_per_node=8 \
     trainer.nnodes="${NNODES}" \
     trainer.val_before_train=False \
-    trainer.test_freq=10 \
-    trainer.save_freq=10 \
+    trainer.test_freq=5 \
+    trainer.save_freq=5 \
     trainer.total_epochs=40 \
     trainer.default_local_dir="${CKPTS_DIR}" \
     trainer.resume_mode=disable \
-    tasksampler.ts_ratio=16 \
-    tasksampler.framework=4 \
-    tasksampler.bandit_sample_strategy='threshold'\
-    tasksampler.bandit_lower_bound=0.3\
-    tasksampler.bandit_upper_bound=0.7\
-    tasksampler.bandit_init=True\
-    tasksampler.bandit_init_dir="${HOME}/verl/recipe/ours/scripts/math/index_score.json"\
+    tasksampler.ts_ratio=1 \
+    tasksampler.framework=0 \
     "${@:1}"
